@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300px" height="300px" viewBox="0 0 300 300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="#000000" x="0" y="0" width="300" height="300"></rect>
+        <line x1="85.9519088" y1="176.519382" x2="227.67368" y2="176.519382" id="Path-33" stroke="#979797" stroke-width="10"></line>
+        <polyline id="Path-35" stroke="#979797" stroke-width="10" points="201.61591 210.611644 222.848902 210.611644 256.941163 176.519382"></polyline>
+        <polyline id="Path-30" stroke="#979797" stroke-width="10" points="185.134709 133.980412 140.755398 89.6011009 66.6680741 89.6011009"></polyline>
+        <polyline id="Path-29" stroke="#03FF00" stroke-width="10" points="263.038603 176.519382 227.67368 176.519382 185.134709 133.980412 123 133.980412"></polyline>
+        <polyline id="Path-31" stroke="#979797" stroke-width="10" points="55.4966955 210.611644 120.04417 210.611644 85.9519088 176.519382 36.1785784 176.519382"></polyline>
+        <polyline id="Path-32" stroke="#979797" stroke-width="10" points="59.8770477 176.519382 102.416018 133.980412 107.060026 133.980412"></polyline>
+        <line x1="122" y1="210.611644" x2="201.61591" y2="210.611644" id="Path-34" stroke="#FF0000" stroke-width="10"></line>
+        <polygon id="Triangle" fill="#FF0000" transform="translate(115.000000, 134.000000) rotate(-90.000000) translate(-115.000000, -134.000000) " points="115 126 126 142 104 142"></polygon>
+    </g>
+</svg>
