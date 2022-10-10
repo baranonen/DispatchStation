@@ -81,7 +81,7 @@ var points = {
     "p425": {"normalleft": "b50", "divergingleft": "b50", "normalright": "b35", "divergingright": "b34", "position": "normal", "status": "unset", "direction": "left"},
     "p429": {"normalleft": "b35", "divergingleft": "b35", "normalright": "b36", "divergingright": "b42", "position": "normal", "status": "unset", "direction": "left"},
     "p422": {"normalleft": "b36", "divergingleft": "b43", "normalright": "b37", "divergingright": "b37", "position": "normal", "status": "unset", "direction": "left"},
-    "p419": {"normalleft": "b1", "divergingleft": "b1", "normalright": "b2", "divergingright": "b11", "position": "normal", "status": "unset", "direction": "left"},
+    "p419": {"normalleft": "b1", "divergingleft": "b1", "normalright": "b2", "divergingright": "b11", "position": "diverging", "status": "unset", "direction": "left"},
 }
 
 for (const[key] of Object.entries(points)) {
@@ -178,24 +178,13 @@ for (const[key] of Object.entries(signals)) {
 var automaticBlocks = {
     "b29": {"direction": "right"},
     "b30": {"direction": "right"},
-    "p417n": {"direction": "right"},
     "b31": {"direction": "right"},
-    "b21": {"direction": "right"},
-    "b22": {"direction": "right"},
-    "b23": {"direction": "right"},
-    "b47": {"direction": "right"},
-    "b46": {"direction": "right"},
+    "p417n": {"direction": "right"},
+    "b49": {"direction": "left"},
+    "b48": {"direction": "left"},
+    "b48": {"direction": "left"},
     "b10": {"direction": "left"},
     "b9": {"direction": "left"},
-    "b8": {"direction": "left"},
-    "b7": {"direction": "left"},
-    "b11": {"direction": "left"},
-    "p419d": {"direction": "left"},
-    "p418n": {"direction": "left"},
-    "b12": {"direction": "left"},
-    "b1": {"direction": "left"},
-    "b48": {"direction": "left"},
-    "b49": {"direction": "left"},
 }
 
 for (const[key] of Object.entries(automaticBlocks)) {

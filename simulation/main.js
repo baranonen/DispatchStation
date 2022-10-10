@@ -9,6 +9,7 @@ var terminal
 var command
 var switchNumbers = true
 var signalNumbers = true
+var signalReady
 
 function nextBlock(block) {
     if (Array.from(block)[0] == "b") {
@@ -280,6 +281,30 @@ function tsk() {
     });
 }
 
+function omb(command) {
+    if (!automaticSignalList.includes("s" + command[1])) {
+        automaticSignalList.push("s" + command[1])
+    }
+}
+
+function osi(command) {
+    automaticSignalList = automaticSignalList.filter(x => x != "s" + command[1])
+    checkedBlock = signals["s" + command[1]].nextblock
+    while (true) {
+        if (Array.from(checkedBlock)[0] == "b") {
+            blocks[checkedBlock].direction = signals["s" + command[1]].direction
+            blocks[checkedBlock].status = "unset"
+        } else {
+            points[checkedBlock].direction = signals["s" + command[1]].direction
+            points[checkedBlock].status = "unset"
+        }
+        if (signals["s" + command[1]].possibleends.includes(checkedBlock)) {
+            break
+        }
+        checkedBlock = nextBlock(checkedBlock)
+    }
+}
+
 function updateAutomaticBlocks() {
     automaticBlockList.forEach(block => {
         if (Array.from(block)[0] == "b") {
@@ -301,6 +326,62 @@ function updateAutomaticBlocks() {
     });
 }
 
+var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s200", "s206"]
+
+function updateAutomaticSignals() {
+    automaticSignalList.forEach(signal => {
+        signalReady = true
+        checkedBlock = signals[signal].nextblock
+        while (signalReady == true) {
+            if (blockStatus(checkedBlock) != "unset" && blockStatus(checkedBlock) != "set") {
+                signalReady = false
+                break
+            }
+            if (signals[signal].possibleends.includes(checkedBlock)) {
+                break
+            }
+            if (signals[signal].direction == "right") {
+                if (Array.from(checkedBlock)[0] == "b") {
+                    checkedBlock = blocks[checkedBlock].right
+                } else {
+                    if (points[checkedBlock].position == "diverging") {
+                        checkedBlock = points[checkedBlock].divergingright
+                    } else {
+                        checkedBlock = points[checkedBlock].normalright
+                    }
+                }
+            } else {
+                if (Array.from(checkedBlock)[0] == "b") {
+                    checkedBlock = blocks[checkedBlock].left
+                } else {
+                    if (points[checkedBlock].position == "diverging") {
+                        checkedBlock = points[checkedBlock].divergingleft
+                    } else {
+                        checkedBlock = points[checkedBlock].normalleft
+                    }
+                }
+            }
+        }
+        checkedBlock = signals[signal].nextblock
+        if (signalReady) {
+            while (true) {
+                if (Array.from(checkedBlock)[0] == "b") {
+                    blocks[checkedBlock].direction = signals[signal].direction
+                    blocks[checkedBlock].status = "set"
+                } else {
+                    points[checkedBlock].direction = signals[signal].direction
+                    points[checkedBlock].status = "set"
+                }
+                if (signals[signal].possibleends.includes(checkedBlock)) {
+                    console.log("1")
+                    break
+                }
+                checkedBlock = nextBlock(checkedBlock)
+            }
+        }
+    });
+}
+
 updateAutomaticBlocks()
 
 window.setInterval(updateScreen, 100);
@@ -311,6 +392,7 @@ function updateScreen() {
     updateSignals()
     drawSignals()
     updateAutomaticBlocks()
+    updateAutomaticSignals()
 }
 
 function forceKeyPressUppercase(e)
@@ -357,6 +439,10 @@ function forceKeyPressUppercase(e)
             ssg()
         } else if (command[0] == "SMG") {
             smg()
+        } else if (command[0] == "OMB") {
+            omb(command)
+        } else if (command[0] == "OSI") {
+            osi(command)
         }
         terminal.value = ""
     }
