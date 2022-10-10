@@ -294,6 +294,12 @@ function osi(command) {
         if (Array.from(checkedBlock)[0] == "b") {
             blocks[checkedBlock].direction = signals["s" + command[1]].direction
             blocks[checkedBlock].status = "unset"
+            if (checkedBlock == "b55" || checkedBlock == "b54") {
+                blocks["b1001"].status = "unset"
+            }
+            if (checkedBlock == "b42" || checkedBlock == "b43") {
+                blocks["b1002"].status = "unset"
+            }
         } else {
             points[checkedBlock].direction = signals["s" + command[1]].direction
             points[checkedBlock].status = "unset"
@@ -340,6 +346,18 @@ function updateAutomaticSignals() {
             if (signals[signal].possibleends.includes(checkedBlock)) {
                 break
             }
+            if (checkedBlock == "b55" || checkedBlock == "b54") {
+                if (blockStatus("b1001") != "unset" && blockStatus("b1001") != "set") {
+                    signalReady = false
+                    break
+                }
+            }
+            if (checkedBlock == "b42" || checkedBlock == "b43") {
+                if (blockStatus("b1002") != "unset" && blockStatus("b1002") != "set") {
+                    signalReady = false
+                    break
+                }
+            }
             if (signals[signal].direction == "right") {
                 if (Array.from(checkedBlock)[0] == "b") {
                     checkedBlock = blocks[checkedBlock].right
@@ -368,12 +386,17 @@ function updateAutomaticSignals() {
                 if (Array.from(checkedBlock)[0] == "b") {
                     blocks[checkedBlock].direction = signals[signal].direction
                     blocks[checkedBlock].status = "set"
+                    if (checkedBlock == "b55" || checkedBlock == "b54") {
+                        blocks["b1001"].status = "set"
+                    }
+                    if (checkedBlock == "b42" || checkedBlock == "b43") {
+                        blocks["b1002"].status = "set"
+                    }
                 } else {
                     points[checkedBlock].direction = signals[signal].direction
                     points[checkedBlock].status = "set"
                 }
                 if (signals[signal].possibleends.includes(checkedBlock)) {
-                    console.log("1")
                     break
                 }
                 checkedBlock = nextBlock(checkedBlock)
