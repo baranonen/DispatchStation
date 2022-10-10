@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | DispatchStation</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
+    * {
+        font-family: "Source Code Pro";
+        color: white;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: black;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 700px;
+    }
+    h1 {
+        color: #03FF00
+    }
+    h2 {
+        color: #ffff40;
+        margin-bottom: 0;
+    }
+    h3 {
+        color: #FF00FF;
+        margin-bottom: 0;
+    }
+    table {
+        width: 100%;
+        border: 1px solid #C0C0C0;
+        border-spacing: 0;
+    }
+    td, th {
+        width: 33.33%;
+        padding: 5px;
+        border: 1px solid #C0C0C0;
+        margin: 0;
+    }
+    a, .link {
+        color: #04A1E8;
+    }
+    img {
+        width: 100%;
+        border: 1px solid #C0C0C0;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DispatchStation</h1>
+        <a href="simulation/"><h2 class="link">Go to the simulation ></h1></a>
+        <a href="#help">Help ></a>
+        <h2>Info</h2>
+        <p>DispatchStation is a web based simulation of the interlocking and ATS system which is being used in the M1 line of Istanbul metro.</p>
+        <p>The screen which includes Otogar, Esenler and Terazidere stations is simulated. Since trains go to different terminus stations from here, different routes need to be created. This makes it the most used screen by dispatchers.</p>
+        <h2>Original System</h2>
+        <p>The signalling system (CITYFLO 250) in the line consists of four types of computers:</p>
+        <ul>
+            <li><h3>JZS 950 | Main Interlocking</h3><br>Ensures that routes do not overlap with each other and decides if signals can be opened or closed.</li>
+            <li><h3>JZU 840 | Object Controller</h3><br>According to the information from JZS 950, communicates with and manages the track objects such as switches and signals.</li>
+            <li><h3>MAN 90 | Dispatcher Interface</h3><br>Displays the entire system in a mimic screen and gets written commands from the dispatcher. Runs together with the "OPStation" program on the dispatcher's computer.</li>
+            <li><h3>EBICAB 700 | Onboard ATC</h3><br>Reads beacons, calculates braking curves and ensures that the train is in safe speed limits.</li>
+        </ul>
+        <img src="assets/esenler.png">
+        <p>MAN 90 system in the Esenler depot<br>Photo: <a href="http://nek.istanbul.edu.tr:4444/ekos/TEZ/48272.pdf">Nevzat BAYRAK</a></p>
+        <h2>Simulation</h2>
+        <p>This project simulates the OPStation program in a web interface. The dispatcher can request authorization and write commands that make the system change the states of objects and assign routes.</p>
+        <h2 id="help">Help</h2>
+        <h3>Interface</h3>
+        <p>To start writing commands, you need to get authorization.</p>
+        <p>Click "Authorization" in the first popup window.</p>
+        <img src="assets/firstscreen.png" alt="First screen. The Authorization button is being clicked.">
+        <p>Then, click "OK" in the next window.</p>
+        <img src="assets/secondscreen.png" alt="Second screen. The OK button is being clicked.">
+        <p>After completing these steps, you can write commands in the bottom right field.</p>
+        <h3>Dispatching</h3>
+        <p>To assign routes, you need to know the trains' destinations.</p>
+        <p>Hover your mouse over the date & time window to view the timetable.</p>
+        <img src="assets/timetable.png" alt="Timetable">
+        <p>Here, you can see the trains' destinations and entry times to your screen.</p>
+        <p>Together with destinations, the next station is also displayed, so that you can find the route easier.</p>
+        <p>The mostly used command is YTT, which lets you assign routes between signals. For example, a train from Yenikapı to Havalimanı can be routed with "YTT 155 201"</p>
+        <img src="assets/terminal.png" alt="Picture of bottom right terminal.">
+        <p>To run a command, hit Enter.</p>
+        <p>You can find a list of available commands below.</p>
+        <h3>Commands</h3>
+        <table>
+            <tr>
+                <th>Command</th>
+                <th>Explanation</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>YTT (Yol Tanzim Talebi)</td>
+                <td>Assigns a route between specified signals.</td>
+                <td>YTT 155 201</td>
+            </tr>
+            <tr>
+                <td>YTI (Yol Tanzim İptali)</td>
+                <td>Cancels the route between specified signals.</td>
+                <td>YTI 155 201</td>
+            </tr>
+            <tr>
+                <td>TSK (Tüm Sinyaller Kapalı)</td>
+                <td>Closes all of the signals.</td>
+                <td>TSK</td>
+            </tr>
+            <tr>
+                <td>MBL (Makas Bloke)</td>
+                <td>Blocks the specified switch.</td>
+                <td>MBL 421</td>
+            </tr>
+            <tr>
+                <td>MLK (Makas Lokal Kumanda)</td>
+                <td>Puts the specified switch in local control. Switches in this mode cannot be controlled from OPStation.</td>
+                <td>MLK 421</td>
+            </tr>
+            <tr>
+                <td>MMK (Makas Merkezi Kumanda)</td>
+                <td>Puts the specified switch back to central control.</td>
+                <td>MMK 421</td>
+            </tr>
+            <tr>
+                <td>MSA (Makas Sağa)</td>
+                <td>Sets the specified switch to the right position.</td>
+                <td>MSA 421</td>
+            </tr>
+            <tr>
+                <td>MSO (Makas Sola)</td>
+                <td>Sets the specified switch to the left position.</td>
+                <td>MSO 421</td>
+            </tr>
+            <tr>
+                <td>MNG (Makas Numaralarını Göster)</td>
+                <td>Shows/removes the switches' numbers.</td>
+                <td>MNG</td>
+            </tr>
+            <tr>
+                <td>SSG (Sinyal Numaralarını Göster)</td>
+                <td>Shows/removes the signals' numbers.</td>
+                <td>SSG</td>
+            </tr>
+            <tr>
+                <td>SMG (Hiçbir Obje Gösterme)</td>
+                <td>Removes all of the objects from the screen.</td>
+                <td>SMG</td>
+            </tr>
+            <tr>
+                <td>SAM (Sinyal Akşam Modu)</td>
+                <td>Puts the signals in night mode and dims them.</td>
+                <td>SAM</td>
+            </tr>
+            <tr>
+                <td>SGM (Sinyal Gündüz Modu)</td>
+                <td>Puts the signals in day mode and brightens them.</td>
+                <td>SGM</td>
+            </tr>
+        </table>
+        <br>
+        <a href="https://github.com/baranonen/DispatchStation">GitHub ></a>
+        <a href="simulation/">Start simulation ></a>
+    </div>
+</body>
+</html>
