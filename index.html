@@ -101,14 +101,59 @@
         <h3>Dispatching</h3>
         <p>To assign routes, you need to know the trains' destinations.</p>
         <p>Hover your mouse over the date & time window to view the timetable.</p>
+        <p>Tip: You can click the date & time window to enter full screen mode.</p>
         <img src="assets/timetable.png" alt="Timetable">
         <p>Here, you can see the trains' destinations and entry times to your screen.</p>
         <p>Together with destinations, the next station is also displayed, so that you can find the route easier.</p>
+        <h3>Opening Routes</h3>
         <p>The mostly used command is YTT, which lets you assign routes between signals. For example, a train from Yenikapı to Havalimanı can be routed with "YTT 155 201"</p>
         <img src="assets/terminal.png" alt="Picture of bottom right terminal.">
-        <p>To run a command, hit Enter.</p>
-        <p>You can find a list of available commands below.</p>
-        <h3>Commands</h3>
+        <p>To run this command, hit Enter.</p>
+        <p>Here's the list of the commands that you need to enter while dispatching different trains.</p>
+        <table>
+            <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Command</th>
+            </tr>
+            <tr>
+                <td>H.Limanı</td>
+                <td>Yenikapı</td>
+                <td>YTT 202 154</td>
+            </tr>
+            <tr>
+                <td>Yenikapı</td>
+                <td>H.Limanı</td>
+                <td>YTT 155 201</td>
+            </tr>
+            <tr>
+                <td>Kirazlı</td>
+                <td>Yenikapı</td>
+                <td>YTT 304 154</td>
+            </tr>
+            <tr>
+                <td>Yenikapı</td>
+                <td>Kirazlı</td>
+                <td>YTT 155 303</td>
+            </tr>
+        </table>
+        <p>You can also open routes partially, if a part of the desired route is blocked due to high traffic.</p>
+        <h3>Misrouting</h3>
+        <img src="assets/misroute.png" alt="A misrouted train">
+        <p>As seen in the screenshot, a train can be routed to the wrong platform in the Otogar (OTG) station. Fixing this problem is pretty simple.</p>
+        <ol>
+            <li>Put the signal 154 to manual control by writing "OSI 154"</li>
+            <li>Change the switch 419's direction to normal by writing "MSO 419"</li>
+            <li>Put the signal 156 to automatic control by writing "OMB 156"</li>
+        </ol>
+        <img src="assets/fixedmisroute.png" alt="Misrouting problem is fixed">
+        <p>After the blocks are cleared, you can revert to the normal operation again.</p>
+        <ol>
+            <li>Put the signal 156 to manual control by writing "OSI 156"</li>
+            <li>Change the switch 419's direction to diverging by writing "MSA 419"</li>
+            <li>Put the signal 156 to automatic control by writing "OMB 154"</li>
+        </ol>
+        <h3>Available Commands</h3>
         <table>
             <tr>
                 <th>Command</th>

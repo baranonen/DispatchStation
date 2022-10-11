@@ -77,10 +77,12 @@ function updateTrain(name) {
             }
         }
 
-        if (Array.from(prevBlock(trains[name].position))[0] == "b") {
-            blocks[prevBlock(trains[name].position)].status = "unset"
-        } else {
-            points[prevBlock(trains[name].position)].status = "unset"
+        if (blockStatus(prevBlock(trains[name].position)) == "occupied") {
+            if (Array.from(prevBlock(trains[name].position))[0] == "b") {
+                blocks[prevBlock(trains[name].position)].status = "unset"
+            } else {
+                points[prevBlock(trains[name].position)].status = "unset"
+            }
         }
 
         if (prevBlock(trains[name].position) == "b55" || prevBlock(trains[name].position) == "b54") {
