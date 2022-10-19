@@ -1,30 +1,49 @@
 "use strict"
 
-var lastTrainNumber = 0
 var canContinue
 var scheduleDate
 var currentDate
+var allBlocksOK
 
 var trains = {}
 
 var timetable = []
 
+function checkAllFree(controlledBlocks) {
+    allBlocksOK = true
+    controlledBlocks.forEach(block => {
+        if (blockStatus(block) != "set") {
+            allBlocksOK = false
+        }
+    });
+    if (allBlocksOK) {
+        return true
+    } else {
+        return false
+    }
+}
+
 function addTrainToMap(name) {
     if (name[0] + name[1] == "HL") {
-        trains[name] = {"position": "b29", "stationWaitCount": "0"}
-        blocks["b29"].status = "occupied"
-    }
-    if (name[0] + name[1] == "HY") {
-        trains[name] = {"position": "b10", "stationWaitCount": "0"}
-        blocks["b10"].status = "occupied"
-    }
-    if (name[0] + name[1] == "KY") {
-        trains[name] = {"position": "b49", "stationWaitCount": "0"}
-        blocks["b49"].status = "occupied"
-    }
-    if (name[0] + name[1] == "KR") {
-        trains[name] = {"position": "b29", "stationWaitCount": "0"}
-        blocks["b29"].status = "occupied"
+        if (checkAllFree(["b29", "p417", "b30", "b31"])) {
+            trains[name] = {"position": "b29", "stationWaitCount": "0"}
+            blocks["b29"].status = "occupied"
+        }
+    } else if (name[0] + name[1] == "HY") {
+        if (checkAllFree(["b10", "b9"])) {
+            trains[name] = {"position": "b10", "stationWaitCount": "0"}
+            blocks["b10"].status = "occupied"
+        }
+    } else if (name[0] + name[1] == "KY") {
+        if (checkAllFree(["b49", "b48"])) {
+            trains[name] = {"position": "b49", "stationWaitCount": "0"}
+            blocks["b49"].status = "occupied"
+        }
+    } else if (name[0] + name[1] == "KR") {
+        if (checkAllFree(["b29", "p417", "b30", "b31"])) {
+            trains[name] = {"position": "b29", "stationWaitCount": "0"}
+            blocks["b29"].status = "occupied"
+        }
     }
 }
 
@@ -151,6 +170,21 @@ function addToSchedule(ms, from, dest) {
     document.getElementById("timetable").contentWindow.document.getElementById("table").innerHTML = html
 }
 
+function startSimulation() {
+    startTime()
+    addHYTrain()
+    addToSchedule(0, "H.Limanı", "Yenikapı (OTO)")
+    
+    window.setTimeout(addHLTrain, 1000 * 60)
+    addToSchedule(1000 * 60, "Yenikapı", "H.Limanı (TDR)")
+    
+    window.setTimeout(addKYTrain, 1000 * 60 * 3)
+    addToSchedule(1000 * 60 * 3, "Kirazlı", "Yenikapı (OTO)")
+    
+    window.setTimeout(addKRTrain, 1000 * 60 * 4)
+    addToSchedule(1000 * 60 * 4, "Yenikapı", "Kirazlı (ESN)")
+}
+
 function addHLTrain() {
     addTrainToMap("HL" + (Math.floor(Math.random() * (999 - 100 + 1)) + 100))
     window.setTimeout(addHLTrain, 1000 * 60 * 6)
@@ -174,19 +208,6 @@ function addKRTrain() {
     window.setTimeout(addKRTrain, 1000 * 60 * 6)
     addToSchedule(1000 * 60 * 6, "Yenikapı", "Kirazlı (ESN)")
 }
-
-addHYTrain()
-addToSchedule(0, "H.Limanı", "Yenikapı (OTO)")
-
-window.setTimeout(addHLTrain, 1000 * 60)
-addToSchedule(1000 * 60, "Yenikapı", "H.Limanı (TDR)")
-
-window.setTimeout(addKYTrain, 1000 * 60 * 3)
-addToSchedule(1000 * 60 * 3, "Kirazlı", "Yenikapı (OTO)")
-
-window.setTimeout(addKRTrain, 1000 * 60 * 4)
-addToSchedule(1000 * 60 * 4, "Yenikapı", "Kirazlı (ESN)")
-
 
 window.setInterval(updateTraffic, 5000);
 
