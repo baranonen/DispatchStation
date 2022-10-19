@@ -156,7 +156,7 @@ var signals = {
     "s307": {"nextblock": "b47", "prevblock": "b46", "direction": "right", "possibleends": ["b47"], "control": "auto", "status": ""},
     "s153": {"nextblock": "b14", "prevblock": "b13", "direction": "right", "possibleends": ["b19", "b9", "b20", "b51", "b45"], "control": "auto", "status": ""},
     "s204": {"nextblock": "b27", "prevblock": "b20", "direction": "left", "possibleends": ["b14", "b32"], "control": "auto", "status": ""},
-    "s304": {"nextblock": "b19", "prevblock": "b48", "direction": "left", "possibleends": ["b13", "b3"], "control": "auto", "status": ""},
+    "s304": {"nextblock": "b19", "prevblock": "b48", "direction": "left", "possibleends": ["b19"], "control": "auto", "status": ""},
     "s156": {"nextblock": "b2", "prevblock": "b3", "direction": "left", "possibleends": ["b1"], "control": "auto", "status": ""},
     "s202": {"nextblock": "b6", "prevblock": "b7", "direction": "left", "possibleends": ["b13", "b3"], "control": "auto", "status": ""},
     "s206": {"nextblock": "b7", "prevblock": "b8", "direction": "left", "possibleends": ["b7"], "control": "auto", "status": ""},
