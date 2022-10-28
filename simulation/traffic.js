@@ -1,6 +1,5 @@
 "use strict"
 
-var canContinue
 var scheduleDate
 var currentDate
 var allBlocksOK
@@ -47,70 +46,71 @@ function addTrainToMap(name) {
     }
 }
 
+function isBlockFree(block) {
+    var isFree = true
+    Object.entries(trains).forEach(([k, v]) => {
+        if (v.position == block) {
+            isFree = false
+        }
+    })
+    return isFree
+}
+
+function setStatus(block, desiredStatus) {
+    if (Array.from(block)[0] == "b") {
+        blocks[block].status = desiredStatus
+    } else if (Array.from(block)[0] == "p") {
+        points[block].status = desiredStatus
+    }
+}
+
 function updateTrain(name) {
-    canContinue = false
-    if (trains[name].position == "out") {
+    var canContinue = false
+    var position = trains[name].position
+    if (blockStatus(prevBlock(position)) == "occupied") {
+        if (isBlockFree(prevBlock(position))) {
+            setStatus(prevBlock(position), "unset")
+
+            if (prevBlock(trains[name].position) == "b55" || prevBlock(trains[name].position) == "b54") {
+                blocks["b1001"].status = "unset"
+            }
+
+            if (prevBlock(trains[name].position) == "b42" || prevBlock(trains[name].position) == "b43") {
+                blocks["b1002"].status = "unset"
+            }
+
+            if (Array.from(trains[name].position)[0] != "p") {
+                return
+            }
+
+        }
+    }
+    if (nextBlock(position) == "") {
+        setStatus(position, "unset")
+        delete trains[name]
         return
     }
-    if (nextBlock(trains[name].position) == "") {
-        if (Array.from(prevBlock(trains[name].position))[0] == "b") {
-            if (blocks[prevBlock(trains[name].position)].status == "occupied") {
-                blocks[prevBlock(trains[name].position)].status = "unset"
-            } else {
-                if (Array.from(trains[name].position)[0] == "b") {
-                    blocks[trains[name].position].status = "unset"
-                    delete trains[name]
-                } else {
-                    points[trains[name].position].status = "unset"
-                    delete trains[name]
-                }
-            }
-        } else {
-            if (points[prevBlock(trains[name].position)].status == "occupied") {
-                points[prevBlock(trains[name].position)].status = "unset"
-            } else {
-                if (Array.from(trains[name].position)[0] == "b") {
-                    blocks[trains[name].position].status = "unset"
-                    delete trains[name]
-                } else {
-                    points[trains[name].position].status = "unset"
-                    delete trains[name]
-                }
-            }
-        }
-        return
-    }
-
-    if (prevBlock(trains[name].position) && prevBlock(trains[name]) != "") {
-        if (Array.from(trains[name].position)[0] == "b") {
-            if (Array.from(prevBlock(trains[name].position))[0] == "b") {
-                if (blocks[prevBlock(trains[name].position)].status == "occupied") {
-                    blocks[prevBlock(trains[name].position)].status = "unset"
-                    return
+    
+    if (Array.from(trains[name].position)[0] == "p") {
+        canContinue = true
+    } else if (Array.from(trains[name].position)[0] == "b") {
+        if (blockDirection(position) == "left") {
+            if (blocks[position].leftsignal != "") {
+                if (signals[blocks[position].leftsignal].status == "green") {
+                    canContinue = true
                 }
             } else {
-                if (points[prevBlock(trains[name].position)].status == "occupied") {
-                    points[prevBlock(trains[name].position)].status = "unset"
-                    return
+                canContinue = true
+            }
+        } else if (blockDirection(position) == "right") {
+            if (blocks[position].rightsignal != "") {
+                if (signals[blocks[position].rightsignal].status == "green") {
+                    canContinue = true
                 }
-            }
-        }
-
-        if (blockStatus(prevBlock(trains[name].position)) == "occupied") {
-            if (Array.from(prevBlock(trains[name].position))[0] == "b") {
-                blocks[prevBlock(trains[name].position)].status = "unset"
             } else {
-                points[prevBlock(trains[name].position)].status = "unset"
+                canContinue = true
             }
         }
-
-        if (prevBlock(trains[name].position) == "b55" || prevBlock(trains[name].position) == "b54") {
-            blocks["b1001"].status = "unset"
-        }
-        if (prevBlock(trains[name].position) == "b42" || prevBlock(trains[name].position) == "b43") {
-            blocks["b1002"].status = "unset"
-        }
-        
     }
 
     if (Array.from(trains[name].position)[0] == "b") {
@@ -122,33 +122,22 @@ function updateTrain(name) {
         }
     }
 
-    if (Array.from(nextBlock(trains[name].position))[0] == "b") {
-        if (blocks[nextBlock(trains[name].position)].status == "set") {
-            canContinue = true
-        }
-    } else {
-        if (points[nextBlock(trains[name].position)].status == "set") {
-            canContinue = true
-        }
-    }
-
     if (canContinue) {
         trains[name].stationWaitCount = 0
         trains[name].position = nextBlock(trains[name].position)
+
         if (Array.from(trains[name].position)[0] == "b") {
             blocks[trains[name].position].status = "occupied"
         } else {
             points[trains[name].position].status = "occupied"
         }
+
         if (trains[name].position == "b55" || trains[name].position == "b54") {
             blocks["b1001"].status = "occupied"
         }
+        
         if (trains[name].position == "b42" || trains[name].position == "b43") {
             blocks["b1002"].status = "occupied"
-        }
-    } else {
-        if (blocks[prevBlock(trains[name].position)].status == "occupied") {
-            blocks[prevBlock(trains[name].position)].status = "unset"
         }
     }
 }

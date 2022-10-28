@@ -102,9 +102,13 @@ function yti(requestedRouteText) {
     requestedRoute = routes[requestedRouteText[1] + "-" + requestedRouteText[2]]
     requestedRoute.blocks.forEach(block => {
         if (Array.from(block)[0] == "b") {
-            blocks[block].status = "unset"
+            if (blocks[block].status != "occupied") {
+                blocks[block].status = "unset"
+            }
         } else if (Array.from(block)[0] == "p") {
-            points[block.slice(0, -1)].status = "unset"
+            if (points[block.slice(0, -1)].status != "occupied") {
+                points[block.slice(0, -1)].status = "unset"
+            }
         }
     });
     routes[requestedRouteText[1] + "-" + requestedRouteText[2]].status = false
@@ -141,21 +145,23 @@ function drawPoints() {
 
 function drawBlocks() {
     blockList.forEach(block => {
-        if (blocks[block].status == "unset") {
-            document.getElementById("map").getElementById(block).style.fill = "#C0C0C0"
+        if (blocks[block].status == "occupied") {
+            document.getElementById("map").getElementById(block).style.fill = "#FF0000"
         } else if (blocks[block].status == "set") {
             document.getElementById("map").getElementById(block).style.fill = "#03FF00"
-        } else if (blocks[block].status == "occupied") {
-            document.getElementById("map").getElementById(block).style.fill = "#FF0000"
-        }
+        } else if (blocks[block].status == "unset") {
+            document.getElementById("map").getElementById(block).style.fill = "#C0C0C0"
+        } 
     });
 }
 
 function blockStatus(block) {
     if (Array.from(block)[0] == "b") {
         return blocks[block].status
-    } else {
+    } else if (Array.from(block)[0] == "p") {
         return points[block].status
+    } else {
+        return ""
     }
 }
 
@@ -222,10 +228,12 @@ function mso(command) {
 }
 
 function mbl(command) {
-    if (points["p" + command[1]].status == "set") {
-        points["p" + command[1]].status = "unset"
-    } else {
-        points["p" + command[1]].status = "set"
+    if (points["p" + command[1]].status != "occupied") {
+        if (points["p" + command[1]].status == "set") {
+            points["p" + command[1]].status = "unset"
+        } else {
+            points["p" + command[1]].status = "set"
+        }
     }
 }
 
@@ -292,17 +300,21 @@ function osi(command) {
     checkedBlock = signals["s" + command[1]].nextblock
     while (true) {
         if (Array.from(checkedBlock)[0] == "b") {
-            blocks[checkedBlock].direction = signals["s" + command[1]].direction
-            blocks[checkedBlock].status = "unset"
-            if (checkedBlock == "b55" || checkedBlock == "b54") {
-                blocks["b1001"].status = "unset"
-            }
-            if (checkedBlock == "b42" || checkedBlock == "b43") {
-                blocks["b1002"].status = "unset"
+            if (blockStatus(checkedBlock) != "occupied") {
+                blocks[checkedBlock].direction = signals["s" + command[1]].direction
+                blocks[checkedBlock].status = "unset"
+                if (checkedBlock == "b55" || checkedBlock == "b54") {
+                    blocks["b1001"].status = "unset"
+                }
+                if (checkedBlock == "b42" || checkedBlock == "b43") {
+                    blocks["b1002"].status = "unset"
+                }
             }
         } else {
-            points[checkedBlock].direction = signals["s" + command[1]].direction
-            points[checkedBlock].status = "unset"
+            if (blockStatus(checkedBlock) != "occupied") {
+                points[checkedBlock].direction = signals["s" + command[1]].direction
+                points[checkedBlock].status = "unset"
+            }
         }
         if (signals["s" + command[1]].possibleends.includes(checkedBlock)) {
             break
