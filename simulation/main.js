@@ -364,7 +364,7 @@ function updateAutomaticSignals() {
         signalReady = true
         checkedBlock = signals[signal].nextblock
         while (signalReady == true) {
-            if (blockStatus(checkedBlock) != "unset" && blockStatus(checkedBlock) != "set") {
+            if (blockStatus(checkedBlock) != "unset") {
                 signalReady = false
                 break
             }
@@ -419,6 +419,13 @@ function updateAutomaticSignals() {
                     }
                 } else {
                     points[checkedBlock].direction = signals[signal].direction
+                    if (blockStatus(prevBlock(checkedBlock)) != "set") {
+                        if (points[checkedBlock].position == "diverging") {
+                            points[checkedBlock].position = "normal"
+                        } else if (points[checkedBlock].position == "normal") {
+                            points[checkedBlock].position = "diverging"
+                        }
+                    }
                     points[checkedBlock].status = "set"
                 }
                 if (signals[signal].possibleends.includes(checkedBlock)) {
