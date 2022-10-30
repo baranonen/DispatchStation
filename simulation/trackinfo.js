@@ -190,3 +190,5 @@ var automaticBlocks = {
 for (const[key] of Object.entries(automaticBlocks)) {
     automaticBlockList.push(key)
 }
+
+var labels = ["b48l", "b46l", "b45l", "b3l", "b19l", "b13l", "b31l", "b3l", "b7l", "b9l", "b22l", "b20l", "b21l", "b8l"]

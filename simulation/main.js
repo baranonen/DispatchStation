@@ -41,8 +41,10 @@ function prevBlock(block) {
     if (Array.from(block)[0] == "b") {
         if (blocks[block].direction == "left") {
             return blocks[block].right
-        } else {
+        } else if (blocks[block].direction == "right") {
             return blocks[block].left
+        } else {
+            return ""
         }
     } else if (Array.from(block)[0] == "p") {
         if (points[block].direction == "right") {
@@ -60,6 +62,14 @@ function prevBlock(block) {
         } else {
             return ""
         }
+    }
+}
+
+function prevSetBlock(block) {
+    if (blockStatus(block) != "set") {
+        return ""
+    } else {
+        return prevBlock(block)
     }
 }
 
@@ -156,6 +166,9 @@ function drawBlocks() {
 }
 
 function blockStatus(block) {
+    if (block == "") {
+        return ""
+    }
     if (Array.from(block)[0] == "b") {
         return blocks[block].status
     } else if (Array.from(block)[0] == "p") {
@@ -417,6 +430,46 @@ function updateAutomaticSignals() {
     });
 }
 
+function getTrainInBlock(block) {
+    var trainName = ""
+    Object.entries(trains).forEach(([k, v]) => {
+        if (v.position == block) {
+            trainName = k
+        }
+    })
+    return trainName
+}
+
+function labelForBlock(block) {
+    var label = ""
+        var currentControlledBlock = block
+        while (true) {
+            if (blockStatus(currentControlledBlock) == "occupied") {
+                label = getTrainInBlock(currentControlledBlock)
+                break
+            } else {
+                if (prevSetBlock(currentControlledBlock) && prevSetBlock(currentControlledBlock) != "") {
+                    currentControlledBlock = prevSetBlock(currentControlledBlock)
+                } else {
+                    label = getTrainInBlock(currentControlledBlock)
+                    break
+                }
+            }
+        }
+    return label
+}
+
+function updateLabels() {
+    labels.forEach(label => {
+        if (blockStatus(label.slice(0, -1)) == "occupied") {
+            document.getElementById("map").getElementById(label).style.fill = "#FF0000"
+        } else if (blockStatus(label.slice(0, -1)) == "set") {
+            document.getElementById("map").getElementById(label).style.fill = "#03FF00"
+        }
+        document.getElementById("map").getElementById(label).getElementsByTagName("tspan")[0].innerHTML = labelForBlock(label.slice(0, -1))
+    });
+}
+
 updateAutomaticBlocks()
 
 window.setInterval(updateScreen, 100);
@@ -428,6 +481,7 @@ function updateScreen() {
     drawSignals()
     updateAutomaticBlocks()
     updateAutomaticSignals()
+    updateLabels()
 }
 
 function forceKeyPressUppercase(e)
