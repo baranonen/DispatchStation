@@ -175,25 +175,25 @@ function startSimulation() {
 }
 
 function addHLTrain() {
-    addTrainToMap("HL" + (Math.floor(Math.random() * (999 - 100 + 1)) + 100))
+    addTrainToMap("HL" + (Math.floor(Math.random() * (599 - 501 + 1)) + 501))
     window.setTimeout(addHLTrain, 1000 * 60 * 6)
     addToSchedule(1000 * 60 * 6, "Yenikapı", "H.Limanı (TDR)")
 }
 
 function addHYTrain() {
-    addTrainToMap("HY" + (Math.floor(Math.random() * (999 - 100 + 1)) + 100))
+    addTrainToMap("HY" + (Math.floor(Math.random() * (599 - 501 + 1)) + 501))
     window.setTimeout(addHYTrain, 1000 * 60 * 6)
     addToSchedule(1000 * 60 * 6, "H.Limanı", "Yenikapı (OTO)")
 }
 
 function addKYTrain() {
-    addTrainToMap("KY" + (Math.floor(Math.random() * (999 - 100 + 1)) + 100))
+    addTrainToMap("KY" + (Math.floor(Math.random() * (599 - 501 + 1)) + 501))
     window.setTimeout(addKYTrain, 1000 * 60 * 6)
     addToSchedule(1000 * 60 * 6, "Kirazlı", "Yenikapı (OTO)")
 }
 
 function addKRTrain() {
-    addTrainToMap("KR" + (Math.floor(Math.random() * (999 - 100 + 1)) + 100))
+    addTrainToMap("KR" + (Math.floor(Math.random() * (599 - 501 + 1)) + 501))
     window.setTimeout(addKRTrain, 1000 * 60 * 6)
     addToSchedule(1000 * 60 * 6, "Yenikapı", "Kirazlı (ESN)")
 }
