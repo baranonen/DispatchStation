@@ -73,23 +73,7 @@ function prevSetBlock(block) {
     }
 }
 
-function ytt(requestedRouteText) {
-    isPossible = true
-    requestedRoute = routes[requestedRouteText[1] + "-" + requestedRouteText[2]]
-    requestedRoute.blocks.forEach(block => {
-        if (Array.from(block)[0] == "b") {
-            if (blocks[block].status != "unset") {
-                isPossible = false
-            }
-        } else if (Array.from(block)[0] == "p") {
-            if (points[block.slice(0, -1)].status != "unset") {
-                isPossible = false
-            }
-        }
-    });
-    if (!isPossible) {
-        return
-    }
+function setRoute(requestedRouteText) {
     requestedRoute.blocks.forEach(block => {
         if (Array.from(block)[0] == "b") {
             blocks[block].status = "set"
@@ -105,9 +89,63 @@ function ytt(requestedRouteText) {
         }
     });
     routes[requestedRouteText[1] + "-" + requestedRouteText[2]].status = true
+    signals["s" + requestedRouteText[1]].isReserved = "no"
+    signals["s" + requestedRouteText[2]].isReserved = "no"
+    routeWaitingList = routeWaitingList.filter(v => v !== requestedRouteText)
+}
+
+var routeWaitingList = []
+
+function addRouteToWaitingList(requestedRouteText) {
+    if (signals["s" + requestedRouteText[1]].isReserved == "no" && signals["s" + requestedRouteText[2]].isReserved == "no") {
+        routeWaitingList.push(requestedRouteText)
+        signals["s" + requestedRouteText[1]].isReserved = "start"
+        signals["s" + requestedRouteText[2]].isReserved = "end"
+    }
+}
+
+function checkWaitingList() {
+    routeWaitingList.forEach(requestedRouteText => {
+        if (checkRoutePossible(requestedRouteText)) {
+            setRoute(requestedRouteText)
+        }
+    });
+}
+
+function checkRoutePossible(requestedRouteText) {
+    isPossible = true
+    requestedRoute = routes[requestedRouteText[1] + "-" + requestedRouteText[2]]
+    requestedRoute.blocks.forEach(block => {
+        if (Array.from(block)[0] == "b") {
+            if (blocks[block].status != "unset") {
+                isPossible = false
+            }
+        } else if (Array.from(block)[0] == "p") {
+            if (points[block.slice(0, -1)].status != "unset") {
+                isPossible = false
+            }
+        }
+    });
+    return isPossible
+}
+
+function ytt(requestedRouteText) {
+    if (signals["s" + requestedRouteText[1]].isReserved == "no" && signals["s" + requestedRouteText[2]].isReserved == "no") {
+        if (checkRoutePossible(requestedRouteText)) {
+            setRoute(requestedRouteText)
+        } else {
+            addRouteToWaitingList(requestedRouteText)
+        }
+    }
 }
 
 function yti(requestedRouteText) {
+    routeWaitingList = routeWaitingList.filter(v => v !== requestedRouteText)
+    signals["s" + requestedRouteText[1]].isReserved = "no"
+    signals["s" + requestedRouteText[2]].isReserved = "no"
+}
+
+function tyi(requestedRouteText) {
     isPossible = true
     requestedRoute = routes[requestedRouteText[1] + "-" + requestedRouteText[2]]
     requestedRoute.blocks.forEach(block => {
@@ -228,6 +266,18 @@ function drawSignals() {
     });
 }
 
+function drawSignalMarkers() {
+    signalList.forEach(signal => {
+        if (signals[signal].isReserved == "no") {
+            document.getElementById("map").getElementById(signal + "m").style.fill = "#000000"
+        } else if (signals[signal].isReserved == "start") {
+            document.getElementById("map").getElementById(signal + "m").style.fill = "#03FF00"
+        } else if (signals[signal].isReserved == "end") {
+            document.getElementById("map").getElementById(signal + "m").style.fill = "#FF0000"
+        }
+    });
+}
+
 function msa(command) {
     if (points["p" + command[1]].status == "unset") {
         points["p" + command[1]].position = "diverging"
@@ -290,6 +340,10 @@ function smg() {
 }
 
 function tsk() {
+    routeWaitingList = []
+    signalList.forEach(signal => {
+        signals[signal].isReserved = "no"
+    });
     blockList.forEach(block => {
         if (blocks[block].status != "occupied") {
             blocks[block].status = "unset"
@@ -489,6 +543,8 @@ function updateScreen() {
     updateAutomaticBlocks()
     updateAutomaticSignals()
     updateLabels()
+    checkWaitingList()
+    drawSignalMarkers()
 }
 
 function forceKeyPressUppercase(e)
@@ -517,6 +573,8 @@ function forceKeyPressUppercase(e)
             ytt(command)
         } else if (command[0] == "YTI") {
             yti(command)
+        } else if (command[0] == "TYI") {
+            tyi(command)
         } else if (command[0] == "MSA") {
             msa(command)
         } else if (command[0] == "MSO") {

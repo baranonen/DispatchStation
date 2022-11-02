@@ -171,13 +171,18 @@
             </tr>
             <tr>
                 <td>YTT (Yol Tanzim Talebi)</td>
-                <td>Assigns a route between specified signals.</td>
+                <td>Assigns a route between specified signals. When not possible, adds the route to the queue so that it can be opened when possible.</td>
                 <td>YTT 155 201</td>
             </tr>
             <tr>
                 <td>YTI (Yol Tanzim İptali)</td>
-                <td>Cancels the route between specified signals.</td>
+                <td>If the route is queued to open, removes the route from the queue.</td>
                 <td>YTI 155 201</td>
+            </tr>
+            <tr>
+                <td>TYI (Tanzimli Yol İptali)</td>
+                <td>Cancels the opened route between specified signals.</td>
+                <td>TYI 155 201</td>
             </tr>
             <tr>
                 <td>OMB (Otomatik Başlatma)</td>
