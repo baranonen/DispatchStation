@@ -59,6 +59,7 @@ var blocks = {
     "b11": {"left": "p419", "right": "p418", "status": "unset", "direction": "", "isStation": false, "leftsignal": "", "rightsignal": ""},
     "b1001": {"left": "", "right": "", "status": "unset", "direction": "", "isStation": false, "leftsignal": "", "rightsignal": ""},
     "b1002": {"left": "", "right": "", "status": "unset", "direction": "", "isStation": false, "leftsignal": "", "rightsignal": ""},
+    "b1003": {"left": "", "right": "", "status": "unset", "direction": "", "isStation": false, "leftsignal": "", "rightsignal": ""},
 }
 
 for (const[key] of Object.entries(blocks)) {
@@ -90,9 +91,9 @@ for (const[key] of Object.entries(points)) {
 
 var routes = {
     // Airport/Kirazlı Direction
-    "155-201": { "blocks": ["b32", "p421n", "b33", "p502d", "b27", "b20"], "direction": "right", "status": false },
-    "155-203": { "blocks": ["b32", "p421n", "b33", "p502d", "b27", "b20", "b21"], "direction": "right", "status": false },
-    "155-207": { "blocks": ["b32", "p421n", "b33", "p502d", "b27", "b20", "b21", "b22"], "direction": "right", "status": false },
+    "155-201": { "blocks": ["b32", "p421n", "b33", "b1003", "p502d", "b27", "b20"], "direction": "right", "status": false },
+    "155-203": { "blocks": ["b32", "p421n", "b33", "b1003", "p502d", "b27", "b20", "b21"], "direction": "right", "status": false },
+    "155-207": { "blocks": ["b32", "p421n", "b33", "b1003", "p502d", "b27", "b20", "b21", "b22"], "direction": "right", "status": false },
     "155-303": { "blocks": ["b32", "p421d", "b40", "p427n", "b41", "p428n", "b44", "b45"], "direction": "right", "status": false },
     "155-307": { "blocks": ["b32", "p421d", "b40", "p427n", "b41", "p428n", "b44", "b45", "b46"], "direction": "right", "status": false },
     "201-203": { "blocks": ["b21"], "direction": "right", "status": false },
@@ -107,9 +108,9 @@ var routes = {
     "153-201": { "blocks": ["b14", "p423n", "b15", "p501d", "b26", "p502n", "b27", "b20"], "direction": "right", "status": false },
     "153-203": { "blocks": ["b14", "p423n", "b15", "p501d", "b26", "p502n", "b27", "b20", "b21"], "direction": "right", "status": false },
     "153-207": { "blocks": ["b14", "p423n", "b15", "p501d", "b26", "p502n", "b27", "b20", "b21", "b22"], "direction": "right", "status": false },
-    "153-157": { "blocks": ["b14", "p423d", "b25", "b50", "p425d", "b34", "b51"], "direction": "right", "status": false },
-    "153-303": { "blocks": ["b14", "p423d", "b25", "b50", "p425n", "b35", "p429d", "b42", "b1002", "p428d", "b44", "b45"], "direction": "right", "status": false },
-    "153-307": { "blocks": ["b14", "p423d", "b25", "b50", "p425n", "b35", "p429d", "b42", "b1002", "p428d", "b44", "b45", "b46"], "direction": "right", "status": false },
+    "153-157": { "blocks": ["b14", "p423d", "b25", "b1003", "b50", "p425d", "b34", "b51"], "direction": "right", "status": false },
+    "153-303": { "blocks": ["b14", "p423d", "b25", "b1003", "b50", "p425n", "b35", "p429d", "b42", "b1002", "p428d", "b44", "b45"], "direction": "right", "status": false },
+    "153-307": { "blocks": ["b14", "p423d", "b25", "b1003", "b50", "p425n", "b35", "p429d", "b42", "b1002", "p428d", "b44", "b45", "b46"], "direction": "right", "status": false },
     "303-307": { "blocks": ["b46"], "direction": "right", "status": false },
     "301-305": { "blocks": ["b48"], "direction": "right", "status": false },
     // Yenikapı Direction
@@ -128,18 +129,18 @@ var routes = {
     "200-156": { "blocks": ["b8", "b7", "b6", "p504n", "b5", "p503n", "b4", "b3"], "direction": "left", "status": false },
     "200-154": { "blocks": ["b8", "b7", "b6", "p504d", "b55", "b1001", "p505d", "b16", "p501n", "b15", "p423n", "b14", "b13"], "direction": "left", "status": false },
     "204-154": { "blocks": ["b27", "p502n", "b26", "p501d", "b15", "p423n", "b14", "b13"], "direction": "left", "status": false },
-    "204-152": { "blocks": ["b27", "p502d", "b33", "p421n", "b32", "b31"], "direction": "left", "status": false },
-    "162-154": { "blocks": ["b34", "p425d", "b50", "b25", "p423d", "b14", "b13"], "direction": "left", "status": false },
+    "204-152": { "blocks": ["b27", "p502d", "b33", "b1003", "p421n", "b32", "b31"], "direction": "left", "status": false },
+    "162-154": { "blocks": ["b34", "p425d", "b50", "b25", "b1003", "p423d", "b14", "b13"], "direction": "left", "status": false },
     "162-166": { "blocks": ["b34", "p425d", "b50"], "direction": "left", "status": false },
-    "166-154": { "blocks": ["b25", "p423d", "b14", "b13"], "direction": "left", "status": false },
-    "160-154": { "blocks": ["b37", "p422n", "b36", "p429n", "b35", "p425n", "b50", "b25", "p423d", "b14", "b13"], "direction": "left", "status": false },
+    "166-154": { "blocks": ["b25", "b1003", "p423d", "b14", "b13"], "direction": "left", "status": false },
+    "160-154": { "blocks": ["b37", "p422n", "b36", "p429n", "b35", "p425n", "b50", "b25", "b1003", "p423d", "b14", "b13"], "direction": "left", "status": false },
     "160-166": { "blocks": ["b37", "p422n", "b36", "p429n", "b35", "p425n", "b50"], "direction": "left", "status": false },
     "160-152": { "blocks": ["b37", "p422d", "b43", "b1002", "p427d", "b40", "p421d", "b32", "b31"], "direction": "left", "status": false },
     "150-152": { "blocks": ["b44", "p428n", "b41", "p427n", "b40", "p421d", "b32", "b31"], "direction": "left", "status": false },
-    "150-154": { "blocks": ["b44", "p428d", "b42", "b1002", "p429d", "b35", "p425n", "b50", "b25", "p423d", "b14", "b13"], "direction": "left", "status": false },
+    "150-154": { "blocks": ["b44", "p428d", "b42", "b1002", "p429d", "b35", "p425n", "b50", "b25", "b1003", "p423d", "b14", "b13"], "direction": "left", "status": false },
     "150-166": { "blocks": ["b44", "p428d", "b42", "b1002", "p429d", "b35", "p425n", "b50"], "direction": "left", "status": false },
     "306-152": { "blocks": ["b45", "b44", "p428n", "b41", "p427n", "b40", "p421d", "b32", "b31"], "direction": "left", "status": false },
-    "306-154": { "blocks": ["b45", "b44", "p428d", "b42", "b1002", "p429d", "b35", "p425n", "b50", "b25", "p423d", "b14", "b13"], "direction": "left", "status": false },
+    "306-154": { "blocks": ["b45", "b44", "p428d", "b42", "b1002", "p429d", "b35", "p425n", "b50", "b25", "b1003", "p423d", "b14", "b13"], "direction": "left", "status": false },
     "306-166": { "blocks": ["b45", "b44", "p428d", "b42", "b1002", "p429d", "b35", "p425n", "b50"], "direction": "left", "status": false },
 }
 

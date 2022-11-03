@@ -89,18 +89,22 @@ function setRoute(requestedRouteText) {
         }
     });
     routes[requestedRouteText[1] + "-" + requestedRouteText[2]].status = true
-    signals["s" + requestedRouteText[1]].isReserved = "no"
-    signals["s" + requestedRouteText[2]].isReserved = "no"
+    if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
+        signals["s" + requestedRouteText[1]].isReserved = "no"
+        signals["s" + requestedRouteText[2]].isReserved = "no"
+    }
     routeWaitingList = routeWaitingList.filter(v => v !== requestedRouteText)
 }
 
 var routeWaitingList = []
 
 function addRouteToWaitingList(requestedRouteText) {
-    if (signals["s" + requestedRouteText[1]].isReserved == "no" && signals["s" + requestedRouteText[2]].isReserved == "no") {
-        routeWaitingList.push(requestedRouteText)
-        signals["s" + requestedRouteText[1]].isReserved = "start"
-        signals["s" + requestedRouteText[2]].isReserved = "end"
+    if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
+        if (signals["s" + requestedRouteText[1]].isReserved == "no" && signals["s" + requestedRouteText[2]].isReserved == "no") {
+            routeWaitingList.push(requestedRouteText)
+            signals["s" + requestedRouteText[1]].isReserved = "start"
+            signals["s" + requestedRouteText[2]].isReserved = "end"
+        }
     }
 }
 
@@ -130,7 +134,15 @@ function checkRoutePossible(requestedRouteText) {
 }
 
 function ytt(requestedRouteText) {
-    if (signals["s" + requestedRouteText[1]].isReserved == "no" && signals["s" + requestedRouteText[2]].isReserved == "no") {
+    if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
+        if (signals["s" + requestedRouteText[1]].isReserved == "no" && signals["s" + requestedRouteText[2]].isReserved == "no") {
+            if (checkRoutePossible(requestedRouteText)) {
+                setRoute(requestedRouteText)
+            } else {
+                addRouteToWaitingList(requestedRouteText)
+            }
+        }
+    } else {
         if (checkRoutePossible(requestedRouteText)) {
             setRoute(requestedRouteText)
         } else {

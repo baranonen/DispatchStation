@@ -79,6 +79,10 @@ function updateTrain(name) {
                 blocks["b1002"].status = "unset"
             }
 
+            if (prevBlock(trains[name].position) == "b25" || prevBlock(trains[name].position) == "b33") {
+                blocks["b1003"].status = "unset"
+            }
+
             if (Array.from(trains[name].position)[0] != "p") {
                 return
             }
@@ -138,6 +142,10 @@ function updateTrain(name) {
         
         if (trains[name].position == "b42" || trains[name].position == "b43") {
             blocks["b1002"].status = "occupied"
+        }
+        
+        if (trains[name].position == "b25" || trains[name].position == "b33") {
+            blocks["b1003"].status = "occupied"
         }
     }
 }
