@@ -10,6 +10,7 @@ var command
 var switchNumbers = true
 var signalNumbers = true
 var signalReady
+var markerBlinkState = true
 
 function nextBlock(block) {
     if (Array.from(block)[0] == "b") {
@@ -238,29 +239,33 @@ function blockDirection(block) {
 
 function updateSignals() {
     signalList.forEach(signal => {
-        if (blockStatus(signals[signal].nextblock) == blockStatus(signals[signal].prevblock)) {
-            signals[signal].status = ""
+        if (signals[signal].control == "closed") {
+            signals[signal].status = "red"
         } else {
-            signalCanBeClear = true
-            checkedBlock = signals[signal].nextblock
-            while (signalCanBeClear == true) {
-                if (blockStatus(checkedBlock) != "set") {
-                    signalCanBeClear = false
-                    break
-                }
-                if (blockDirection(checkedBlock) != signals[signal].direction) {
-                    signalCanBeClear = false
-                    break
-                }
-                if (signals[signal].possibleends.includes(checkedBlock)) {
-                    break
-                }
-                checkedBlock = nextBlock(checkedBlock)
-            }
-            if (signalCanBeClear) {
-                signals[signal].status = "green"
+            if (blockStatus(signals[signal].nextblock) == blockStatus(signals[signal].prevblock)) {
+                signals[signal].status = ""
             } else {
-                signals[signal].status = "red"
+                signalCanBeClear = true
+                checkedBlock = signals[signal].nextblock
+                while (signalCanBeClear == true) {
+                    if (blockStatus(checkedBlock) != "set") {
+                        signalCanBeClear = false
+                        break
+                    }
+                    if (blockDirection(checkedBlock) != signals[signal].direction) {
+                        signalCanBeClear = false
+                        break
+                    }
+                    if (signals[signal].possibleends.includes(checkedBlock)) {
+                        break
+                    }
+                    checkedBlock = nextBlock(checkedBlock)
+                }
+                if (signalCanBeClear) {
+                    signals[signal].status = "green"
+                } else {
+                    signals[signal].status = "red"
+                }
             }
         }
     })
@@ -268,12 +273,17 @@ function updateSignals() {
 
 function drawSignals() {
     signalList.forEach(signal => {
-        if (signals[signal].status == "green") {
-            document.getElementById("map").getElementById(signal).style.fill = "#03FF00"
-        } else if (signals[signal].status == "red") {
-            document.getElementById("map").getElementById(signal).style.fill = "#FF0000"
-        } else if (signals[signal].status == "") {
-            document.getElementById("map").getElementById(signal).style.fill = "#C0C0C0"
+        if (signals[signal].control == "closed") {
+            document.getElementById("map").getElementById(signal + "r").style.opacity = "1"
+        } else {
+            document.getElementById("map").getElementById(signal + "r").style.opacity = "0"
+            if (signals[signal].status == "green") {
+                document.getElementById("map").getElementById(signal).style.fill = "#03FF00"
+            } else if (signals[signal].status == "red") {
+                document.getElementById("map").getElementById(signal).style.fill = "#FF0000"
+            } else if (signals[signal].status == "") {
+                document.getElementById("map").getElementById(signal).style.fill = "#C0C0C0"
+            }
         }
     });
 }
@@ -289,6 +299,19 @@ function drawSignalMarkers() {
         }
     });
 }
+
+function blinkSignalMarkers() {
+    signalList.forEach(signal => {
+        if (markerBlinkState) {
+            document.getElementById("map").getElementById(signal + "m").style.opacity = "0"
+        } else {
+            document.getElementById("map").getElementById(signal + "m").style.opacity = "1"
+        }
+    });
+    markerBlinkState = !markerBlinkState
+}
+
+window.setInterval(blinkSignalMarkers, 350);
 
 function msa(command) {
     if (points["p" + command[1]].status == "unset") {
@@ -400,6 +423,14 @@ function osi(command) {
         }
         checkedBlock = nextBlock(checkedBlock)
     }
+}
+
+function bsk(command) {
+    signals["s" + command[1]].control = "closed"
+}
+
+function ksi(command) {
+    signals["s" + command[1]].control = "auto"
 }
 
 function updateAutomaticBlocks() {
@@ -609,6 +640,10 @@ function forceKeyPressUppercase(e)
             omb(command)
         } else if (command[0] == "OSI") {
             osi(command)
+        } else if (command[0] == "BSK") {
+            bsk(command)
+        } else if (command[0] == "KSI") {
+            ksi(command)
         }
         terminal.value = ""
     }
