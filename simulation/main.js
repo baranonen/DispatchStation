@@ -178,26 +178,26 @@ function tyi(requestedRouteText) {
 function drawPoints() {
     pointList.forEach(point => {
         if (points[point].status == "local") {
-            document.getElementById("map").getElementById(point + "n").style.fill = "#0000FF"
-            document.getElementById("map").getElementById(point + "d").style.fill = "#0000FF"
+            document.getElementById("map").getElementById(point + "n").style.stroke = "#0000FF"
+            document.getElementById("map").getElementById(point + "d").style.stroke = "#0000FF"
         } else {
             if (points[point].position == "normal") {
-                document.getElementById("map").getElementById(point + "d").style.fill = "#ffffff00"
+                document.getElementById("map").getElementById(point + "d").style.stroke = "#ffffff00"
                 if (points[point].status == "set") {
-                    document.getElementById("map").getElementById(point + "n").style.fill = "#03FF00"
+                    document.getElementById("map").getElementById(point + "n").style.stroke = "#03FF00"
                 } else if (points[point].status == "occupied") {
-                    document.getElementById("map").getElementById(point + "n").style.fill = "#FF0000"
+                    document.getElementById("map").getElementById(point + "n").style.stroke = "#FF0000"
                 } else if (points[point].status == "unset") {
-                    document.getElementById("map").getElementById(point + "n").style.fill = "#C0C0C0"
+                    document.getElementById("map").getElementById(point + "n").style.stroke = "#C0C0C0"
                 }
             } else {
-                document.getElementById("map").getElementById(point + "n").style.fill = "#ffffff00"
+                document.getElementById("map").getElementById(point + "n").style.stroke = "#ffffff00"
                 if (points[point].status == "set") {
-                    document.getElementById("map").getElementById(point + "d").style.fill = "#03FF00"
+                    document.getElementById("map").getElementById(point + "d").style.stroke = "#03FF00"
                 } else if (points[point].status == "occupied") {
-                    document.getElementById("map").getElementById(point + "d").style.fill = "#FF0000"
+                    document.getElementById("map").getElementById(point + "d").style.stroke = "#FF0000"
                 } else if (points[point].status == "unset") {
-                    document.getElementById("map").getElementById(point + "d").style.fill = "#C0C0C0"
+                    document.getElementById("map").getElementById(point + "d").style.stroke = "#C0C0C0"
                 }
             }
         }
@@ -207,12 +207,24 @@ function drawPoints() {
 function drawBlocks() {
     blockList.forEach(block => {
         if (blocks[block].status == "occupied") {
-            document.getElementById("map").getElementById(block).style.fill = "#FF0000"
+            if (blocks[block].isOverlapBlock) {
+                document.getElementById("map").getElementById(block).style.fill = "#FF0000"
+            } else {
+                document.getElementById("map").getElementById(block).style.stroke = "#FF0000"
+            }
         } else if (blocks[block].status == "set") {
-            document.getElementById("map").getElementById(block).style.fill = "#03FF00"
+            if (blocks[block].isOverlapBlock) {
+                document.getElementById("map").getElementById(block).style.fill = "#03FF00"
+            } else {
+                document.getElementById("map").getElementById(block).style.stroke = "#03FF00"
+            }
         } else if (blocks[block].status == "unset") {
-            document.getElementById("map").getElementById(block).style.fill = "#C0C0C0"
-        } 
+            if (blocks[block].isOverlapBlock) {
+                document.getElementById("map").getElementById(block).style.fill = "#C0C0C0"
+            } else {
+                document.getElementById("map").getElementById(block).style.stroke = "#C0C0C0"
+            }
+        }
     });
 }
 
