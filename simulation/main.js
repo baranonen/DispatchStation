@@ -286,15 +286,16 @@ function updateSignals() {
 function drawSignals() {
     signalList.forEach(signal => {
         if (signals[signal].control == "closed") {
-            document.getElementById("map").getElementById(signal + "r").style.opacity = "1"
+            document.getElementById("map").getElementById(signal).style.fill = "#FF0000"
+            document.getElementById("map").getElementById(signal).style.stroke = "#FF0000"
         } else {
-            document.getElementById("map").getElementById(signal + "r").style.opacity = "0"
+            document.getElementById("map").getElementById(signal).style.fill = "#FF000000"
             if (signals[signal].status == "green") {
-                document.getElementById("map").getElementById(signal).style.fill = "#03FF00"
+                document.getElementById("map").getElementById(signal).style.stroke = "#03FF00"
             } else if (signals[signal].status == "red") {
-                document.getElementById("map").getElementById(signal).style.fill = "#FF0000"
+                document.getElementById("map").getElementById(signal).style.stroke = "#FF0000"
             } else if (signals[signal].status == "") {
-                document.getElementById("map").getElementById(signal).style.fill = "#C0C0C0"
+                document.getElementById("map").getElementById(signal).style.stroke = "#C0C0C0"
             }
         }
     });
