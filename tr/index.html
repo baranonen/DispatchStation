@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Primary Meta Tags -->
+    <title>Ana Sayfa | DispatchStation</title>
+    <meta name="title" content="Ana Sayfa | DispatchStation">
+    <meta name="description" content="İstanbul Metrosu M1 hattında kullanılan anklajman ve ATS sisteminin simülasyonu">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ana Sayfa | DispatchStation">
+    <meta property="og:description" content="İstanbul Metrosu M1 hattında kullanılan anklajman ve ATS sisteminin simülasyonu">
+    <meta property="og:image" content="https://dispatchstation.baranonen.com/favicon.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Ana Sayfa | DispatchStation">
+    <meta property="twitter:description" content="İstanbul Metrosu M1 hattında kullanılan anklajman ve ATS sisteminin simülasyonu">
+    <meta property="twitter:image" content="https://dispatchstation.baranonen.com/favicon.png">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
+    * {
+        font-family: "Source Code Pro";
+        color: white;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: black;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 700px;
+    }
+    h1 {
+        color: #03FF00
+    }
+    h2 {
+        color: #ffff40;
+        margin-bottom: 0;
+    }
+    h3 {
+        color: #FF00FF;
+        margin-bottom: 0;
+    }
+    table {
+        width: 100%;
+        border: 1px solid #C0C0C0;
+        border-spacing: 0;
+    }
+    td, th {
+        width: 33.33%;
+        padding: 5px;
+        border: 1px solid #C0C0C0;
+        margin: 0;
+    }
+    a, .link {
+        color: #04A1E8;
+    }
+    img {
+        width: 100%;
+        border: 1px solid #C0C0C0;
+    }
+    .langbtn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DispatchStation</h1>
+        <a class="langbtn" href="../">English ></a>
+        <a href="simulation/"><h2 class="link">Simülasyonu başlat ></h1></a>
+        <a href="#help">Yardım ></a>
+        <h2>Bilgi</h2>
+        <p>DispatchStation, İstanbul Metrosu M1 hattında kullanılan anklajman ve ATS sisteminin web üzerinden bir simülasyonudur.</p>
+        <p>Otogar, Esenler ve Terazidere istasyonlarını kapsayan ekran simüle edilmektedir. Trenler bu noktadan farklı istasyonlara gittiği için farklı rotaların oluşturulması gerekmektedir. Dolayısıyla trafik operatörleri tarafından en çok bu ekran kullanılmaktadır.</p>
+        <h2>Gerçek Sistem</h2>
+        <p>Hattaki sinyalizasyon sistemi (CITYFLO 250) dört bilgisayar türünden oluşmaktadır:</p>
+        <ul>
+            <li><h3>JZS 950 | Anklajman</h3><br>Rotaların birbiriyle çakışmamasını sağlar ve sinyallerin açık/kapalı olacağına karar verir.</li>
+            <li><h3>JZU 840 | Obje Kontrolcüsü</h3><br>JZS 950'den gelen bilgiye dayanarak makas ve sinyal gibi ilgili hat objeleriyle iletişim kurar ve durumlarını yönetir.</li>
+            <li><h3>MAN 90 | Trafik Operatörü Arayüzü</h3><br>Bütün sistemi bir mimik ekranda gösterir ve trafik operatörüden yazılı komutlar alır. Trafik operatörünün bilgisayarındaki "OPStation" programıyla birlikte çalışır.</li>
+            <li><h3>EBICAB 700 | Araçüstü ATC</h3><br>Bikınları okur, frenleme eğrilerini hesaplar ve trenin güvenli hız limitlerinin içinde kalmasını sağlar.</li>
+        </ul>
+        <img src="../assets/esenler.png">
+        <p>Esenler yerleşkesindeki MAN90 trafik operatörü sistemi<br>Kaynak: <a href="http://nek.istanbul.edu.tr:4444/ekos/TEZ/48272.pdf">Nevzat BAYRAK</a></p>
+        <h2>Simülasyon</h2>
+        <p>Bu proje, OPStation programını bir web arayüzünde simüle eder. Trafik operatörü, yetki aldıktan sonra objelerin durumlarını değiştiren ve rotalar açan komutlar yazabilir.</p>
+        <h2 id="help">Yardım</h2>
+        <h3>Arayüz</h3>
+        <p>Komut yazabilmek için öncelikle yetki almak gerekir.</p>
+        <p>İlk popup penceresinde "Authorization" tuşuna tıklayın.</p>
+        <img src="../assets/firstscreen.png" alt="First screen. The Authorization button is being clicked.">
+        <p>Ardından, bir sonraki pencerede "OK" tuşuna tıklayın.</p>
+        <img src="../assets/secondscreen.png" alt="Second screen. The OK button is being clicked.">
+        <p>Bu adımları tamamladıktan sonra aşağı sağdaki alanda komutlar yazabilirsiniz.</p>
+        <h3>Trafik yönetimi</h3>
+        <p>Rota tanzimi yapabilmek için trenlerin gidiş yönlerini bilmek gerekir.</p>
+        <img src="../assets/traindest.png" alt="A train with Havalimanı destination label">
+        <p>Herhangi bir ucunda sinyaller bulunan bloklarda gelecek trenin ID'si otomatik olarak gösterilir.</p>
+        <p>Bu ID, trenin yönünü de içerir. Mümkün olan yönler bir sonraki başlıkta gösterilmiştir.</p>
+        <p>Trenlerin yönünü öğrenmek için başka bir seçenek ise zaman çizelgesidir.</p>
+        <p>İmleci tarih & Saat penceresinin üzerine getirerek zaman çizelgesini görüntüleyebilirsiniz.</p>
+        <p>İpucu: Tarih & saat penceresine tıklayarak tam ekran moduna geçebilirsiniz.</p>
+        <img src="../assets/timetable.png" alt="Timetable">
+        <p>Burada, trenlerin yönlerini ve ekranınıza giriş saatlerini görebilirsiniz.</p>
+        <p>Yönle birlikte gelecek istasyon da gösterilmektedir. Bu şekilde, hat hakkında bilginiz yoksa gereken rotayı daha kolay bulabilirsiniz.</p>
+        <h3>Rota Tanzimi</h3>
+        <p>En çok kullanılan komut, sinyaller arasında rota tanzimini sağlayan YTT'dir. Örneğin, Yenikapı'dan Havalimanı'na giden bir tren için "YTT 155 201" komutu ile rota tanzim edilebilir.</p>
+        <img src="../assets/terminal.png" alt="Picture of bottom right terminal.">
+        <p>Bu komutu çalıştırmak için klavyenizden Enter'a tıklayın.</p>
+        <p>Farklı trenler için rota tanzim ederken gerekli komutların bulunduğu bu tablodan yararlanabilirsiniz.</p>
+        <table>
+            <tr>
+                <th>Tren ID'sinin başlangıcı</th>
+                <th>Başlangıç</th>
+                <th>Son İstasyon</th>
+                <th>Komut</th>
+            </tr>
+            <tr>
+                <td>HY</td>
+                <td>H.Limanı</td>
+                <td>Yenikapı</td>
+                <td>YTT 202 154</td>
+            </tr>
+            <tr>
+                <td>HL</td>
+                <td>Yenikapı</td>
+                <td>H.Limanı</td>
+                <td>YTT 155 201</td>
+            </tr>
+            <tr>
+                <td>KY</td>
+                <td>Kirazlı</td>
+                <td>Yenikapı</td>
+                <td>YTT 304 154</td>
+            </tr>
+            <tr>
+                <td>KR</td>
+                <td>Yenikapı</td>
+                <td>Kirazlı</td>
+                <td>YTT 155 303</td>
+            </tr>
+        </table>
+        <p>Tanzim etmek istediğiniz rotanın bir kısmı yüksek trafik yüzünden meşgul ise rotaları parçalı olarak başka sinyaller arasında da açabilirsiniz.</p>
+        <h3>Yanlış rota tanzimi</h3>
+        <img src="../assets/misroute.png" alt="A misrouted train">
+        <p>Ekran görüntüsündeki durum gibi, bir tren Otogar (OTG) istasyonunda yanlış perona yönlendirilebilir. Bu problemin çözümü oldukça basittir.</p>
+        <ol>
+            <li>154 numaralı sinyalin otomatiğini "OSI 154" komutu ile iptal edin</li>
+            <li>419 numaralı makasın yönünü "MSO 419" komutu ile normale çevirin</li>
+            <li>156 numaralı sinyali "OMB 156" komutu ile otomatiğe alın</li>
+        </ol>
+        <img src="../assets/fixedmisroute.png" alt="Misrouting problem is fixed">
+        <p>Bloklar boşaldıktan sonra normal işletmeye geri dönebilirsiniz</p>
+        <ol>
+            <li>156 numaralı sinyalin otomatiğini "OSI 156" komutu ile iptal edin</li>
+            <li>419 numaralı makasın yönünü "MSA 419" komutu ile sapmalıya çevirin</li>
+            <li>154 numaralı sinyali "OMB 154" komutu ile otomatiğe alın</li>
+        </ol>
+        <h3>Kullanılabilir Komutlar</h3>
+        <table>
+            <tr>
+                <th>Komut</th>
+                <th>Açıklama</th>
+                <th>Örnek</th>
+            </tr>
+            <tr>
+                <td>YTT (Yol Tanzim Talebi)</td>
+                <td>Belirtilen sinyaller arasında rota tanzim eder. Bu mümkün değilse, rotayı mümkün olduğunda tanzim edebilmek için sıraya ekler.</td>
+                <td>YTT 155 201</td>
+            </tr>
+            <tr>
+                <td>YTI (Yol Tanzim İptali)</td>
+                <td>Rota tanzim için sırafa bekliyorsa bu rotayı sıradan kaldırır.</td>
+                <td>YTI 155 201</td>
+            </tr>
+            <tr>
+                <td>TYI (Tanzimli Yol İptali)</td>
+                <td>Belirtilen sinyaller arasındaki rotayı iptal eder.</td>
+                <td>TYI 155 201</td>
+            </tr>
+            <tr>
+                <td>OMB (Otomatik Başlatma)</td>
+                <td>Belirtilen sinyali otomatik blok sinyaline çevirir. Girilen blok boşsa, tren hareketine devam edebilir.</td>
+                <td>OMB 156</td>
+            </tr>
+            <tr>
+                <td>OSI (Otomatik Listesinden Sil)</td>
+                <td>Belirtilen sinyalin otomatiğini iptal eder. Rotalar YTT ile tekrardan tanzim edilebilir.</td>
+                <td>OSI 156</td>
+            </tr>
+            <tr>
+                <td>TSK (Tüm Sinyaller Kapalı)</td>
+                <td>Bütün sinyalleri kapatır.</td>
+                <td>TSK</td>
+            </tr>
+            <tr>
+                <td>BSK (Blok Sinyali Kapalı)</td>
+                <td>Sinyali kapatır ve bloke eder</td>
+                <td>BSK 155</td>
+            </tr>
+            <tr>
+                <td>KSI (Kapalı Sinyal İptali)</td>
+                <td>Sinyali normal operasyona geri döndürür.</td>
+                <td>KSI 155</td>
+            </tr>
+            <tr>
+                <td>MBL (Makas Bloke)</td>
+                <td>Belirtilen makası bloke eder.</td>
+                <td>MBL 421</td>
+            </tr>
+            <tr>
+                <td>MLK (Makas Lokal Kumanda)</td>
+                <td>Belirtilen makası lokal kumandaya alır. Bu moddaki makaslara OPStation'dan kumanda edilemez.</td>
+                <td>MLK 421</td>
+            </tr>
+            <tr>
+                <td>MMK (Makas Merkezi Kumanda)</td>
+                <td>Belirtilen makası merkezi kumandaya alır.</td>
+                <td>MMK 421</td>
+            </tr>
+            <tr>
+                <td>MSA (Makas Sağa)</td>
+                <td>Belirtilen makası sağa çevirir.</td>
+                <td>MSA 421</td>
+            </tr>
+            <tr>
+                <td>MSO (Makas Sola)</td>
+                <td>Belirtilen makası sola çevirir.</td>
+                <td>MSO 421</td>
+            </tr>
+            <tr>
+                <td>MNG (Makas Numaralarını Göster)</td>
+                <td>Makas numaralarını gösterir/gizler.</td>
+                <td>MNG</td>
+            </tr>
+            <tr>
+                <td>SSG (Sinyal Numaralarını Göster)</td>
+                <td>Sinyal numaralarını gösterir/gizler.</td>
+                <td>SSG</td>
+            </tr>
+            <tr>
+                <td>SMG (Hiçbir Obje Gösterme)</td>
+                <td>Bütün objeleri ekrandan gizler</td>
+                <td>SMG</td>
+            </tr>
+            <tr>
+                <td>SAM (Sinyal Akşam Modu)</td>
+                <td>Sinyalleri akşam moduna geçirerek parlaklıklarını azaltır.</td>
+                <td>SAM</td>
+            </tr>
+            <tr>
+                <td>SGM (Sinyal Gündüz Modu)</td>
+                <td>Sinyalleri gündüz moduna geçirerek parlaklıklarını arttırır.</td>
+                <td>SGM</td>
+            </tr>
+        </table>
+        <br>
+        <a href="https://github.com/baranonen/DispatchStation">GitHub ></a>
+        <a href="../simulation/">Simülasyonu başlat ></a>
+    </div>
+</body>
+</html>
