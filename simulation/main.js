@@ -7,7 +7,7 @@ var checkedBlock
 var endBlocks
 var terminal
 var command
-var switchNumbers = true
+var switchNumbers = false
 var signalNumbers = true
 var signalReady
 var markerBlinkState = true
