@@ -404,13 +404,13 @@ function tsk() {
     });
 }
 
-function omb(command) {
+function obl(command) {
     if (!automaticSignalList.includes("s" + command[1])) {
         automaticSignalList.push("s" + command[1])
     }
 }
 
-function osi(command) {
+function ose(command) {
     automaticSignalList = automaticSignalList.filter(x => x != "s" + command[1])
     checkedBlock = signals["s" + command[1]].nextblock
     while (true) {
@@ -649,10 +649,10 @@ function forceKeyPressUppercase(e)
             ssg()
         } else if (command[0] == "SMG") {
             smg()
-        } else if (command[0] == "OMB") {
-            omb(command)
-        } else if (command[0] == "OSI") {
-            osi(command)
+        } else if (command[0] == "OBL") {
+            obl(command)
+        } else if (command[0] == "OSE") {
+            ose(command)
         } else if (command[0] == "BSK") {
             bsk(command)
         } else if (command[0] == "KSI") {

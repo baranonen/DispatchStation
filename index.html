@@ -157,16 +157,16 @@
         <img src="assets/misroute.png" alt="A misrouted train">
         <p>As seen in the screenshot, a train can be routed to the wrong platform in the Otogar (OTG) station. Fixing this problem is pretty simple.</p>
         <ol>
-            <li>Put the signal 154 to manual control by writing "OSI 154"</li>
+            <li>Put the signal 154 to manual control by writing "OSE 154"</li>
             <li>Change the switch 419's direction to normal by writing "MSO 419"</li>
-            <li>Put the signal 156 to automatic control by writing "OMB 156"</li>
+            <li>Put the signal 156 to automatic control by writing "OBL 156"</li>
         </ol>
         <img src="assets/fixedmisroute.png" alt="Misrouting problem is fixed">
         <p>After the blocks are cleared, you can revert to the normal operation again.</p>
         <ol>
-            <li>Put the signal 156 to manual control by writing "OSI 156"</li>
+            <li>Put the signal 156 to manual control by writing "OSE 156"</li>
             <li>Change the switch 419's direction to diverging by writing "MSA 419"</li>
-            <li>Put the signal 154 to automatic control by writing "OMB 154"</li>
+            <li>Put the signal 154 to automatic control by writing "OBL 154"</li>
         </ol>
         <h3>Available Commands</h3>
         <table>
@@ -191,14 +191,14 @@
                 <td>TYI 155 201</td>
             </tr>
             <tr>
-                <td>OMB (Otomatik Başlatma)</td>
+                <td>OBL (Otomatik Bloke)</td>
                 <td>Makes the specified signal an automatic block signal. If the block being entered is clear, the train can continue.</td>
-                <td>OMB 156</td>
+                <td>OBL 156</td>
             </tr>
             <tr>
-                <td>OSI (Otomatik Listesinden Sil)</td>
+                <td>OSE (Otomatik Blokunu Kaldır)</td>
                 <td>Disables the automatic mode of the signal. Routes can again be opened with YTT.</td>
-                <td>OSI 156</td>
+                <td>OSE 156</td>
             </tr>
             <tr>
                 <td>TSK (Tüm Sinyaller Kapalı)</td>
