@@ -302,9 +302,15 @@ function updateSignals() {
         if (signals[signal].control == "closed") {
             signals[signal].status = "red"
         } else {
-            if (blockStatus(signals[signal].nextblock) == blockStatus(signals[signal].prevblock)) {
+            if (blockStatus(signals[signal].prevblock) == "unset") {
+                if (blockStatus(signals[signal].nextblock) == "unset" || signals[signal].direction != blocks[signals[signal].nextblock].direction) {
+                    signals[signal].status = ""
+                    return
+                }
+            } else if (signals[signal].direction != blocks[signals[signal].prevblock].direction) {
                 signals[signal].status = ""
-            } else {
+                return
+            }
                 signalShouldBe = "green"
                 checkedBlock = signals[signal].nextblock
                 while (signalShouldBe == "green") {
@@ -346,7 +352,6 @@ function updateSignals() {
                     checkedBlock = nextBlock(checkedBlock)
                 }
                 signals[signal].status = signalShouldBe
-            }
         }
     })
 }
