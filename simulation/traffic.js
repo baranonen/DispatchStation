@@ -170,13 +170,13 @@ function addToSchedule(ms, from, dest) {
 function startSimulation() {
     startTime()
     addHYTrain()
-    addToSchedule(0, "H.Limanı", "Yenikapı (OTO)")
+    addToSchedule(0, "H.Limanı", "Yenikapı (OTG)")
     
     window.setTimeout(addHLTrain, 1000 * 60)
     addToSchedule(1000 * 60, "Yenikapı", "H.Limanı (TDR)")
     
     window.setTimeout(addKYTrain, 1000 * 60 * 3)
-    addToSchedule(1000 * 60 * 3, "Kirazlı", "Yenikapı (OTO)")
+    addToSchedule(1000 * 60 * 3, "Kirazlı", "Yenikapı (OTG)")
     
     window.setTimeout(addKRTrain, 1000 * 60 * 4)
     addToSchedule(1000 * 60 * 4, "Yenikapı", "Kirazlı (ESN)")
@@ -191,13 +191,13 @@ function addHLTrain() {
 function addHYTrain() {
     addTrainToMap("HY" + (Math.floor(Math.random() * (599 - 501 + 1)) + 501))
     window.setTimeout(addHYTrain, 1000 * 60 * 6)
-    addToSchedule(1000 * 60 * 6, "H.Limanı", "Yenikapı (OTO)")
+    addToSchedule(1000 * 60 * 6, "H.Limanı", "Yenikapı (OTG)")
 }
 
 function addKYTrain() {
     addTrainToMap("KY" + (Math.floor(Math.random() * (599 - 501 + 1)) + 501))
     window.setTimeout(addKYTrain, 1000 * 60 * 6)
-    addToSchedule(1000 * 60 * 6, "Kirazlı", "Yenikapı (OTO)")
+    addToSchedule(1000 * 60 * 6, "Kirazlı", "Yenikapı (OTG)")
 }
 
 function addKRTrain() {
