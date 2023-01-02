@@ -29,7 +29,7 @@ function addTrainToMap(name) {
             blocks["b29"].status = "occupied"
         }
     } else if (name[0] + name[1] == "HY") {
-        if (checkAllFree(["b10", "b9"])) {
+        if (checkAllFree(["b10", "p509", "b57", "p508", "b56", "b9"])) {
             trains[name] = {"position": "b10", "stationWaitCount": "0"}
             blocks["b10"].status = "occupied"
         }
