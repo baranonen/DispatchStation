@@ -2,7 +2,7 @@
 
 var requestedRoute
 var isPossible
-var signalCanBeClear
+var signalShouldBe
 var checkedBlock
 var endBlocks
 var terminal
@@ -35,6 +35,22 @@ function nextBlock(block) {
         } else {
             return ""
         }
+    }
+}
+
+function leftBlock(block) {
+    if (Array.from(block)[0] == "b") {
+        return blocks[block].left
+    } else if (Array.from(block)[0] == "p") {
+        return points[block].left
+    }
+}
+
+function rightBlock(block) {
+    if (Array.from(block)[0] == "b") {
+        return blocks[block].right
+    } else if (Array.from(block)[0] == "p") {
+        return points[block].right
     }
 }
 
@@ -189,6 +205,8 @@ function drawPoints() {
                     document.getElementById("map").getElementById(point + "n").style.stroke = "#FF0000"
                 } else if (points[point].status == "unset") {
                     document.getElementById("map").getElementById(point + "n").style.stroke = "#C0C0C0"
+                } else if (points[point].status == "cancelled") {
+                    document.getElementById("map").getElementById(point + "n").style.stroke = "#FF00FF"
                 }
             } else {
                 document.getElementById("map").getElementById(point + "n").style.stroke = "#ffffff00"
@@ -198,6 +216,8 @@ function drawPoints() {
                     document.getElementById("map").getElementById(point + "d").style.stroke = "#FF0000"
                 } else if (points[point].status == "unset") {
                     document.getElementById("map").getElementById(point + "d").style.stroke = "#C0C0C0"
+                } else if (points[point].status == "cancelled") {
+                    document.getElementById("map").getElementById(point + "d").style.stroke = "#FF00FF"
                 }
             }
         }
@@ -211,6 +231,12 @@ function drawBlocks() {
                 document.getElementById("map").getElementById(block).style.fill = "#FF0000"
             } else {
                 document.getElementById("map").getElementById(block).style.stroke = "#FF0000"
+            }
+        } else if (blocks[block].status == "cancelled") {
+            if (blocks[block].isOverlapBlock) {
+                document.getElementById("map").getElementById(block).style.fill = "#FF00FF"
+            } else {
+                document.getElementById("map").getElementById(block).style.stroke = "#FF00FF"
             }
         } else if (blocks[block].status == "set") {
             if (blocks[block].isOverlapBlock) {
@@ -249,6 +275,26 @@ function blockDirection(block) {
     }
 }
 
+function cancelBlock(block) {
+    if (Array.from(block)[0] == "b") {
+        blocks["b" + block].status = "cancelled"
+        setTimeout(function(){releaseBlock("b" + block)}, 60000)
+    } else {
+        points["p" + block].status = "cancelled"
+        setTimeout(function(){releaseBlock("p" + block)}, 60000)
+    }
+}
+
+function releaseBlock(block) {
+    if (blockStatus(block) == "cancelled") {
+        if (Array.from(block)[0] == "b") {
+            blocks[block].status = "unset"
+        } else {
+            points[block].status = "unset"
+        }
+    }
+}
+
 function updateSignals() {
     signalList.forEach(signal => {
         if (signals[signal].control == "closed") {
@@ -257,15 +303,39 @@ function updateSignals() {
             if (blockStatus(signals[signal].nextblock) == blockStatus(signals[signal].prevblock)) {
                 signals[signal].status = ""
             } else {
-                signalCanBeClear = true
+                signalShouldBe = "green"
                 checkedBlock = signals[signal].nextblock
-                while (signalCanBeClear == true) {
+                while (signalShouldBe == "green") {
+                    if (blockStatus(checkedBlock) == "cancelled") {
+                        signalShouldBe = "purple"
+                        break
+                    }
+                    if (signals[signal].possibleends.includes(checkedBlock)) {
+                        break
+                    }
+                    if (signals[signal].direction == "right") {
+                        checkedBlock = rightBlock(checkedBlock)
+                    } else {
+                        checkedBlock = leftBlock(checkedBlock)
+                    }
+                    if (!checkedBlock) {
+                        break
+                    }
+                }
+                if (signalShouldBe == "purple") {
+                    signals[signal].status = signalShouldBe
+                    return
+                } else {
+                    signalShouldBe = "green"
+                    checkedBlock = signals[signal].nextblock
+                }
+                while (signalShouldBe == "green") {
                     if (blockStatus(checkedBlock) != "set") {
-                        signalCanBeClear = false
+                        signalShouldBe = "red"
                         break
                     }
                     if (blockDirection(checkedBlock) != signals[signal].direction) {
-                        signalCanBeClear = false
+                        signalShouldBe = "red"
                         break
                     }
                     if (signals[signal].possibleends.includes(checkedBlock)) {
@@ -273,11 +343,7 @@ function updateSignals() {
                     }
                     checkedBlock = nextBlock(checkedBlock)
                 }
-                if (signalCanBeClear) {
-                    signals[signal].status = "green"
-                } else {
-                    signals[signal].status = "red"
-                }
+                signals[signal].status = signalShouldBe
             }
         }
     })
@@ -294,6 +360,8 @@ function drawSignals() {
                 document.getElementById("map").getElementById(signal).style.stroke = "#03FF00"
             } else if (signals[signal].status == "red") {
                 document.getElementById("map").getElementById(signal).style.stroke = "#FF0000"
+            } else if (signals[signal].status == "purple") {
+                document.getElementById("map").getElementById(signal).style.stroke = "#FF00FF"
             } else if (signals[signal].status == "") {
                 document.getElementById("map").getElementById(signal).style.stroke = "#C0C0C0"
             }
@@ -339,12 +407,14 @@ function mso(command) {
 }
 
 function mbl(command) {
-    if (points["p" + command[1]].status != "occupied") {
-        if (points["p" + command[1]].status == "set") {
-            points["p" + command[1]].status = "unset"
-        } else {
-            points["p" + command[1]].status = "set"
-        }
+    if (points["p" + command[1]].status == "unset") {
+        points["p" + command[1]].status = "set"
+    }
+}
+
+function mse(command) {
+    if (points["p" + command[1]].status == "set") {
+        cancelBlock(command[1])
     }
 }
 
@@ -639,6 +709,8 @@ function forceKeyPressUppercase(e)
             tsk()
         } else if (command[0] == "MBL") {
             mbl(command)
+        } else if (command[0] == "MSE") {
+            mse(command)
         } else if (command[0] == "MLK") {
             mlk(command)
         } else if (command[0] == "MMK") {
