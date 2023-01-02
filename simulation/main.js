@@ -180,11 +180,13 @@ function tyi(requestedRouteText) {
     requestedRoute.blocks.forEach(block => {
         if (Array.from(block)[0] == "b") {
             if (blocks[block].status != "occupied") {
-                blocks[block].status = "unset"
+                blocks[block].status = "cancelled"
+                setTimeout(function(){releaseBlock(block)}, 60000)
             }
         } else if (Array.from(block)[0] == "p") {
             if (points[block.slice(0, -1)].status != "occupied") {
-                points[block.slice(0, -1)].status = "unset"
+                points[block.slice(0, -1)].status = "cancelled"
+                setTimeout(function(){releaseBlock(block.slice(0, -1))}, 60000)
             }
         }
     });
@@ -673,33 +675,16 @@ function updateScreen() {
     drawSignalMarkers()
 }
 
-function forceKeyPressUppercase(e)
-  {
-    var charInput = e.keyCode;
-    if((charInput >= 97) && (charInput <= 122)) {
-      if(!e.ctrlKey && !e.metaKey && !e.altKey) {
-        var newChar = charInput - 32;
-        var start = e.target.selectionStart;
-        var end = e.target.selectionEnd;
-        e.target.value = e.target.value.substring(0, start) + String.fromCharCode(newChar) + e.target.value.substring(end);
-        e.target.setSelectionRange(start+1, start+1);
-        e.preventDefault();
-      }
-    }
-  }
-
   terminal = document.getElementById("terminal")
-
-  terminal.addEventListener("keypress", forceKeyPressUppercase, false);
 
   terminal.addEventListener("keypress", ({key}) => {
     if (key === "Enter") {
-        command = terminal.value.split(" ")
+        command = terminal.value.toLocaleUpperCase('en-US').split(" ")
         if (command[0] == "YTT") {
             ytt(command)
         } else if (command[0] == "YTI") {
             yti(command)
-        } else if (command[0] == "TYI") {
+        } else if (command[0] == "CTI") {
             tyi(command)
         } else if (command[0] == "MSA") {
             msa(command)
