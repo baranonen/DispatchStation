@@ -416,11 +416,16 @@ function drawSignalMarkers() {
 }
 
 function blinkSignalMarkers() {
+    command = terminal.value.toLocaleUpperCase('en-US').split(" ")
     signalList.forEach(signal => {
         if (markerBlinkState) {
             document.getElementById("map").getElementById(signal + "m").style.opacity = "0"
+            if (command.includes(signal.substr(1))) {
+                document.getElementById("map").getElementById(signal).style.opacity = "0"
+            }
         } else {
             document.getElementById("map").getElementById(signal + "m").style.opacity = "1"
+            document.getElementById("map").getElementById(signal).style.opacity = "1"
         }
     });
     markerBlinkState = !markerBlinkState
