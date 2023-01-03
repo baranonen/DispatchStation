@@ -11,6 +11,7 @@ var switchNumbers = false
 var signalNumbers = true
 var signalReady
 var markerBlinkState = true
+var lastOpenedRoute = {}
 
 function nextBlock(block) {
     if (Array.from(block)[0] == "b") {
@@ -31,7 +32,7 @@ function nextBlock(block) {
                 return points[block].normalleft
             } else if (points[block].position == "diverging") {
                 return points[block].divergingleft
-            } 
+            }
         } else {
             return ""
         }
@@ -42,7 +43,11 @@ function leftBlock(block) {
     if (Array.from(block)[0] == "b") {
         return blocks[block].left
     } else if (Array.from(block)[0] == "p") {
-        return points[block].left
+        if (points[block].position == "normal") {
+            return points[block].normalleft
+        } else if (points[block].position == "diverging") {
+            return points[block].divergingleft
+        }
     }
 }
 
@@ -50,7 +55,11 @@ function rightBlock(block) {
     if (Array.from(block)[0] == "b") {
         return blocks[block].right
     } else if (Array.from(block)[0] == "p") {
-        return points[block].right
+        if (points[block].position == "normal") {
+            return points[block].normalright
+        } else if (points[block].position == "diverging") {
+            return points[block].divergingright
+        }
     }
 }
 
@@ -75,7 +84,7 @@ function prevBlock(block) {
                 return points[block].normalright
             } else if (points[block].position == "diverging") {
                 return points[block].divergingright
-            } 
+            }
         } else {
             return ""
         }
@@ -111,6 +120,14 @@ function setRoute(requestedRouteText) {
         signals["s" + requestedRouteText[2]].isReserved = "no"
     }
     routeWaitingList = routeWaitingList.filter(v => v !== requestedRouteText)
+    lastOpenedRoute.route = requestedRouteText
+    lastOpenedRoute.seconds = 0
+}
+
+window.setInterval(updateSecondTime, 1000);
+
+function updateSecondTime() {
+    lastOpenedRoute.seconds += 1
 }
 
 var routeWaitingList = []
@@ -174,23 +191,33 @@ function yti(requestedRouteText) {
     signals["s" + requestedRouteText[2]].isReserved = "no"
 }
 
-function tyi(requestedRouteText) {
+function cti(requestedRouteText) {
     isPossible = true
     requestedRoute = routes[requestedRouteText[1] + "-" + requestedRouteText[2]]
     requestedRoute.blocks.forEach(block => {
         if (Array.from(block)[0] == "b") {
             if (blocks[block].status != "occupied") {
                 blocks[block].status = "cancelled"
-                setTimeout(function(){releaseBlock(block)}, 60000)
+                setTimeout(function () { releaseBlock(block) }, 60000)
             }
         } else if (Array.from(block)[0] == "p") {
             if (points[block.slice(0, -1)].status != "occupied") {
                 points[block.slice(0, -1)].status = "cancelled"
-                setTimeout(function(){releaseBlock(block.slice(0, -1))}, 60000)
+                setTimeout(function () { releaseBlock(block.slice(0, -1)) }, 60000)
             }
         }
     });
     routes[requestedRouteText[1] + "-" + requestedRouteText[2]].status = false
+}
+
+function tyi(requestedRouteText) {
+    if (requestedRouteText.length == 3) {
+        cti(["cti", requestedRouteText[1], findNextSignal("s" + requestedRouteText[1]).substr(1)])
+    } else {
+        if (lastOpenedRoute.seconds < 15) {
+            cti(["cti", lastOpenedRoute.route[1], findNextSignal("s" + lastOpenedRoute.route[1]).substr(1)])
+        }
+    }
 }
 
 function drawPoints() {
@@ -280,10 +307,10 @@ function blockDirection(block) {
 function cancelBlock(block) {
     if (Array.from(block)[0] == "b") {
         blocks["b" + block].status = "cancelled"
-        setTimeout(function(){releaseBlock("b" + block)}, 60000)
+        setTimeout(function () { releaseBlock("b" + block) }, 60000)
     } else {
         points["p" + block].status = "cancelled"
-        setTimeout(function(){releaseBlock("p" + block)}, 60000)
+        setTimeout(function () { releaseBlock("p" + block) }, 60000)
     }
 }
 
@@ -311,47 +338,47 @@ function updateSignals() {
                 signals[signal].status = ""
                 return
             }
+            signalShouldBe = "green"
+            checkedBlock = signals[signal].nextblock
+            while (signalShouldBe == "green") {
+                if (blockStatus(checkedBlock) == "cancelled") {
+                    signalShouldBe = "purple"
+                    break
+                }
+                if (signals[signal].possibleends.includes(checkedBlock)) {
+                    break
+                }
+                if (signals[signal].direction == "right") {
+                    checkedBlock = rightBlock(checkedBlock)
+                } else {
+                    checkedBlock = leftBlock(checkedBlock)
+                }
+                if (!checkedBlock) {
+                    break
+                }
+            }
+            if (signalShouldBe == "purple") {
+                signals[signal].status = signalShouldBe
+                return
+            } else {
                 signalShouldBe = "green"
                 checkedBlock = signals[signal].nextblock
-                while (signalShouldBe == "green") {
-                    if (blockStatus(checkedBlock) == "cancelled") {
-                        signalShouldBe = "purple"
-                        break
-                    }
-                    if (signals[signal].possibleends.includes(checkedBlock)) {
-                        break
-                    }
-                    if (signals[signal].direction == "right") {
-                        checkedBlock = rightBlock(checkedBlock)
-                    } else {
-                        checkedBlock = leftBlock(checkedBlock)
-                    }
-                    if (!checkedBlock) {
-                        break
-                    }
+            }
+            while (signalShouldBe == "green") {
+                if (blockStatus(checkedBlock) != "set") {
+                    signalShouldBe = "red"
+                    break
                 }
-                if (signalShouldBe == "purple") {
-                    signals[signal].status = signalShouldBe
-                    return
-                } else {
-                    signalShouldBe = "green"
-                    checkedBlock = signals[signal].nextblock
+                if (blockDirection(checkedBlock) != signals[signal].direction) {
+                    signalShouldBe = "red"
+                    break
                 }
-                while (signalShouldBe == "green") {
-                    if (blockStatus(checkedBlock) != "set") {
-                        signalShouldBe = "red"
-                        break
-                    }
-                    if (blockDirection(checkedBlock) != signals[signal].direction) {
-                        signalShouldBe = "red"
-                        break
-                    }
-                    if (signals[signal].possibleends.includes(checkedBlock)) {
-                        break
-                    }
-                    checkedBlock = nextBlock(checkedBlock)
+                if (signals[signal].possibleends.includes(checkedBlock)) {
+                    break
                 }
-                signals[signal].status = signalShouldBe
+                checkedBlock = nextBlock(checkedBlock)
+            }
+            signals[signal].status = signalShouldBe
         }
     })
 }
@@ -544,6 +571,27 @@ function updateAutomaticBlocks() {
     });
 }
 
+function findNextSignal(signal) {
+    checkedBlock = signals[signal].nextblock
+    while (true) {
+        if (signals[signal].direction == "right") {
+            if (Array.from(checkedBlock)[0] == "b") {
+                if (blocks[checkedBlock].rightsignal) {
+                    return blocks[checkedBlock].rightsignal
+                }
+            }
+            checkedBlock = rightBlock(checkedBlock)
+        } else {
+            if (Array.from(checkedBlock)[0] == "b") {
+                if (blocks[checkedBlock].leftsignal) {
+                    return blocks[checkedBlock].leftsignal
+                }
+            }
+            checkedBlock = leftBlock(checkedBlock)
+        }
+    }
+}
+
 var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s200", "s206"]
 
 function updateAutomaticSignals() {
@@ -636,20 +684,20 @@ function getTrainInBlock(block) {
 
 function labelForBlock(block) {
     var label = ""
-        var currentControlledBlock = block
-        while (true) {
-            if (blockStatus(currentControlledBlock) == "occupied") {
+    var currentControlledBlock = block
+    while (true) {
+        if (blockStatus(currentControlledBlock) == "occupied") {
+            label = getTrainInBlock(currentControlledBlock)
+            break
+        } else {
+            if (prevSetBlock(currentControlledBlock) && prevSetBlock(currentControlledBlock) != "") {
+                currentControlledBlock = prevSetBlock(currentControlledBlock)
+            } else {
                 label = getTrainInBlock(currentControlledBlock)
                 break
-            } else {
-                if (prevSetBlock(currentControlledBlock) && prevSetBlock(currentControlledBlock) != "") {
-                    currentControlledBlock = prevSetBlock(currentControlledBlock)
-                } else {
-                    label = getTrainInBlock(currentControlledBlock)
-                    break
-                }
             }
         }
+    }
     return label
 }
 
@@ -680,9 +728,9 @@ function updateScreen() {
     drawSignalMarkers()
 }
 
-  terminal = document.getElementById("terminal")
+terminal = document.getElementById("terminal")
 
-  terminal.addEventListener("keypress", ({key}) => {
+terminal.addEventListener("keypress", ({ key }) => {
     if (key === "Enter") {
         command = terminal.value.toLocaleUpperCase('en-US').split(" ")
         if (command[0] == "YTT") {
@@ -690,6 +738,8 @@ function updateScreen() {
         } else if (command[0] == "YTI") {
             yti(command)
         } else if (command[0] == "CTI") {
+            cti(command)
+        } else if (command[0] == "TYI") {
             tyi(command)
         } else if (command[0] == "MSA") {
             msa(command)
