@@ -12,6 +12,7 @@ var signalNumbers = true
 var signalReady
 var markerBlinkState = true
 var lastOpenedRoute = {}
+var deleteTerminalCommand = false
 
 function nextBlock(block) {
     if (Array.from(block)[0] == "b") {
@@ -739,6 +740,10 @@ function updateScreen() {
 terminal = document.getElementById("terminal")
 
 terminal.addEventListener("keypress", ({ key }) => {
+    if (deleteTerminalCommand) {
+        terminal.value = ""
+        deleteTerminalCommand = false
+    }
     if (key === "Enter") {
         command = terminal.value.toLocaleUpperCase('en-US').split(" ")
         if (command[0] == "YTT") {
@@ -778,6 +783,6 @@ terminal.addEventListener("keypress", ({ key }) => {
         } else if (command[0] == "KSI") {
             ksi(command)
         }
-        terminal.value = ""
+        deleteTerminalCommand = true
     }
 })
