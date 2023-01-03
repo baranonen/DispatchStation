@@ -493,6 +493,9 @@ function smg() {
 
 function tsk() {
     routeWaitingList = []
+    automaticSignalList.forEach(signal => {
+        ose(["ose", signal.substr(1)])
+    });
     signalList.forEach(signal => {
         signals[signal].isReserved = "no"
     });
