@@ -212,7 +212,7 @@ function cti(requestedRouteText) {
 }
 
 function tyi(requestedRouteText) {
-    if (requestedRouteText.length == 3) {
+    if (requestedRouteText.length == 2) {
         cti(["cti", requestedRouteText[1], findNextSignal("s" + requestedRouteText[1]).substr(1)])
     } else {
         if (lastOpenedRoute.seconds < 15) {
