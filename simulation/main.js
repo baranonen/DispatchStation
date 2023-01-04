@@ -7,8 +7,7 @@ var checkedBlock
 var endBlocks
 var terminal
 var command
-var switchNumbers = false
-var signalNumbers = true
+var currentlyDisplaying = "signalnumbers"
 var signalReady
 var markerBlinkState = true
 var lastOpenedRoute = {}
@@ -470,31 +469,32 @@ function mmk(command) {
     }
 }
 
-function mng() {
-    if (switchNumbers) {
-        document.getElementById("map").getElementById("switches").style.fill = "#000000"
-        switchNumbers = false
-    } else {
+function updateCurrentlyDisplaying() {
+    if (currentlyDisplaying == "switchnumbers") {
         document.getElementById("map").getElementById("switches").style.fill = "#FF00FF"
-        switchNumbers = true
+        document.getElementById("map").getElementById("signals").style.fill = "#000000"
+    } else if (currentlyDisplaying == "signalnumbers") {
+        document.getElementById("map").getElementById("switches").style.fill = "#000000"
+        document.getElementById("map").getElementById("signals").style.fill = "#F5E588"
+    } else if (currentlyDisplaying == "nothing") {
+        document.getElementById("map").getElementById("switches").style.fill = "#000000"
+        document.getElementById("map").getElementById("signals").style.fill = "#000000"
     }
+}
+
+function mng() {
+    currentlyDisplaying = "switchnumbers"
+    updateCurrentlyDisplaying()
 }
 
 function ssg() {
-    if (signalNumbers) {
-        document.getElementById("map").getElementById("signals").style.fill = "#000000"
-        signalNumbers = false
-    } else {
-        document.getElementById("map").getElementById("signals").style.fill = "#F5E588"
-        signalNumbers = true
-    }
+    currentlyDisplaying = "signalnumbers"
+    updateCurrentlyDisplaying()
 }
 
 function smg() {
-    document.getElementById("map").getElementById("signals").style.fill = "#000000"
-    signalNumbers = false
-    document.getElementById("map").getElementById("switches").style.fill = "#000000"
-    switchNumbers = false
+    currentlyDisplaying = "nothing"
+    updateCurrentlyDisplaying()
 }
 
 function tsk() {
