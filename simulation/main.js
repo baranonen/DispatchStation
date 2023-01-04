@@ -738,11 +738,13 @@ function updateScreen() {
 }
 
 terminal = document.getElementById("terminal")
+output = document.getElementById("output")
 
 document.onkeydown = function() {
     if (readyForCommand) {
         terminal.focus()
     }
+    output.value = ""
 }
 
 terminal.addEventListener("keypress", ({ key }) => {
@@ -788,6 +790,8 @@ terminal.addEventListener("keypress", ({ key }) => {
             bsk(command)
         } else if (command[0] == "KSI") {
             ksi(command)
+        } else {
+            output.value = "COMMAND MISSING"
         }
         deleteTerminalCommand = true
     }
