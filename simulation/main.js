@@ -13,6 +13,8 @@ var signalReady
 var markerBlinkState = true
 var lastOpenedRoute = {}
 var deleteTerminalCommand = false
+var routeWaitingList = []
+var readyForCommand = false
 
 function nextBlock(block) {
     if (Array.from(block)[0] == "b") {
@@ -130,8 +132,6 @@ window.setInterval(updateSecondTime, 1000);
 function updateSecondTime() {
     lastOpenedRoute.seconds += 1
 }
-
-var routeWaitingList = []
 
 function addRouteToWaitingList(requestedRouteText) {
     if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
@@ -421,7 +421,7 @@ function blinkSignalMarkers() {
     signalList.forEach(signal => {
         if (markerBlinkState) {
             document.getElementById("map").getElementById(signal + "m").style.opacity = "0"
-            if (command.includes(signal.substr(1))) {
+            if (command.includes(signal.substr(1)) && !deleteTerminalCommand) {
                 document.getElementById("map").getElementById(signal).style.opacity = "0"
             }
         } else {
@@ -738,6 +738,12 @@ function updateScreen() {
 }
 
 terminal = document.getElementById("terminal")
+
+document.onkeydown = function() {
+    if (readyForCommand) {
+        terminal.focus()
+    }
+}
 
 terminal.addEventListener("keypress", ({ key }) => {
     if (deleteTerminalCommand) {

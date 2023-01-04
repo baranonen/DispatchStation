@@ -12,6 +12,7 @@ function secondScreen() {
 
 function mainScreen() {
     document.getElementById("secondscreen").style.display = "none"
+    readyForCommand = true
 }
 
 function hideTimetable() {
