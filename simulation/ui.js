@@ -12,8 +12,6 @@ function secondScreen() {
 
 function mainScreen() {
     document.getElementById("secondscreen").style.display = "none"
-    terminal = document.getElementById("terminal")
-    output = document.getElementById("output")
     readyForCommand = true
 }
 

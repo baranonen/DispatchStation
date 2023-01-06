@@ -737,6 +737,8 @@ function updateScreen() {
     drawSignalMarkers()
 }
 
+terminal = document.getElementById("terminal")
+
 document.onkeydown = function() {
     if (readyForCommand) {
         terminal.focus()
@@ -787,8 +789,6 @@ terminal.addEventListener("keypress", ({ key }) => {
             bsk(command)
         } else if (command[0] == "KSI") {
             ksi(command)
-        } else {
-            output.value = "COMMAND MISSING"
         }
         deleteTerminalCommand = true
     }
