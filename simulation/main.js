@@ -737,9 +737,6 @@ function updateScreen() {
     drawSignalMarkers()
 }
 
-terminal = document.getElementById("terminal")
-output = document.getElementById("output")
-
 document.onkeydown = function() {
     if (readyForCommand) {
         terminal.focus()
