@@ -743,7 +743,6 @@ document.onkeydown = function() {
     if (readyForCommand) {
         terminal.focus()
     }
-    output.value = ""
 }
 
 terminal.addEventListener("keypress", ({ key }) => {
