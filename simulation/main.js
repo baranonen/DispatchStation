@@ -5,7 +5,6 @@ var isPossible
 var signalShouldBe
 var checkedBlock
 var endBlocks
-var terminal
 var command
 var currentlyDisplaying = "signalnumbers"
 var signalReady
@@ -737,58 +736,9 @@ function updateScreen() {
     drawSignalMarkers()
 }
 
-terminal = document.getElementById("terminal")
-
 document.onkeydown = function() {
     if (readyForCommand) {
         terminal.focus()
+        output.value = ""
     }
 }
-
-terminal.addEventListener("keypress", ({ key }) => {
-    if (deleteTerminalCommand) {
-        terminal.value = ""
-        deleteTerminalCommand = false
-    }
-    if (key === "Enter") {
-        command = terminal.value.toLocaleUpperCase('en-US').split(" ")
-        if (command[0] == "YTT") {
-            ytt(command)
-        } else if (command[0] == "YTI") {
-            yti(command)
-        } else if (command[0] == "CTI") {
-            cti(command)
-        } else if (command[0] == "TYI") {
-            tyi(command)
-        } else if (command[0] == "MSA") {
-            msa(command)
-        } else if (command[0] == "MSO") {
-            mso(command)
-        } else if (command[0] == "TSK") {
-            tsk()
-        } else if (command[0] == "MBL") {
-            mbl(command)
-        } else if (command[0] == "MSE") {
-            mse(command)
-        } else if (command[0] == "MLK") {
-            mlk(command)
-        } else if (command[0] == "MMK") {
-            mmk(command)
-        } else if (command[0] == "MNG") {
-            mng()
-        } else if (command[0] == "SSG") {
-            ssg()
-        } else if (command[0] == "SMG") {
-            smg()
-        } else if (command[0] == "OBL") {
-            obl(command)
-        } else if (command[0] == "OSE") {
-            ose(command)
-        } else if (command[0] == "BSK") {
-            bsk(command)
-        } else if (command[0] == "KSI") {
-            ksi(command)
-        }
-        deleteTerminalCommand = true
-    }
-})
