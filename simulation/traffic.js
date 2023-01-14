@@ -206,6 +206,8 @@ function startSimulation() {
                 mng()
             } else if (command[0] == "SSG") {
                 ssg()
+            } else if (command[0] == "RDG") {
+                rdg()
             } else if (command[0] == "SMG") {
                 smg()
             } else if (command[0] == "OBL") {

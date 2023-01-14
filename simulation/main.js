@@ -487,15 +487,24 @@ function mmk(command) {
 function updateCurrentlyDisplaying() {
     if (currentlyDisplaying == "switchnumbers") {
         document.getElementById("map").getElementById("switches").style.fill = "#FF00FF"
-        document.getElementById("map").getElementById("signals").style.fill = "#000000"
+        document.getElementById("map").getElementById("signals").style.fill = "#00000000"
+        document.getElementById("map").getElementById("trackcircuits").style.fill = "#00000000"
     } else if (currentlyDisplaying == "signalnumbers") {
-        document.getElementById("map").getElementById("switches").style.fill = "#000000"
+        document.getElementById("map").getElementById("switches").style.fill = "#00000000"
         document.getElementById("map").getElementById("signals").style.fill = "#F5E588"
+        document.getElementById("map").getElementById("trackcircuits").style.fill = "#00000000"
+    } else if (currentlyDisplaying == "trackcircuits") {
+        document.getElementById("map").getElementById("switches").style.fill = "#00000000"
+        document.getElementById("map").getElementById("signals").style.fill = "#00000000"
+        document.getElementById("map").getElementById("trackcircuits").style.fill = "#D8D8D8"
     } else if (currentlyDisplaying == "nothing") {
-        document.getElementById("map").getElementById("switches").style.fill = "#000000"
-        document.getElementById("map").getElementById("signals").style.fill = "#000000"
+        document.getElementById("map").getElementById("switches").style.fill = "#00000000"
+        document.getElementById("map").getElementById("signals").style.fill = "#00000000"
+        document.getElementById("map").getElementById("trackcircuits").style.fill = "#00000000"
     }
 }
+
+updateCurrentlyDisplaying()
 
 function mng() {
     currentlyDisplaying = "switchnumbers"
@@ -504,6 +513,11 @@ function mng() {
 
 function ssg() {
     currentlyDisplaying = "signalnumbers"
+    updateCurrentlyDisplaying()
+}
+
+function rdg() {
+    currentlyDisplaying = "trackcircuits"
     updateCurrentlyDisplaying()
 }
 
