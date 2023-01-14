@@ -15,6 +15,10 @@ function mainScreen() {
     readyForCommand = true
 }
 
+function closetyl() {
+    document.getElementById("tyl").style.display = "none"
+}
+
 function hideTimetable() {
     document.getElementById("timetable").style.display = "none"
 }

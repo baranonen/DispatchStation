@@ -86,10 +86,20 @@ legend {
     margin: 0 5px 0 5px;
 }
 
-iframe {
+#timetable {
     width: 360px;
     height: 200px;
     position: absolute;
     top: 35px;
     overflow: none;
+}
+
+.tyl {
+    width: 40vw;
+    height: 40vh;
+    margin: 0;
+}
+
+.window {
+    padding: 0;
 }

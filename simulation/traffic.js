@@ -216,6 +216,8 @@ function startSimulation() {
                 bsk(command)
             } else if (command[0] == "KSI") {
                 ksi(command)
+            } else if (command[0] == "TYL") {
+                tyl()
             } else {
                 output.value = "COMMAND MISSING"
             }

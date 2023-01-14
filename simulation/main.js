@@ -219,6 +219,22 @@ function tyi(requestedRouteText) {
     }
 }
 
+function tyl() {
+    var d = new Date()
+
+    var html = "<p><span>Tren Yer Listesi </span> GEO. NODE 1 " + d.toISOString().slice(0, 10) + " " + d.toTimeString().slice(0, 8) + "</p><hr><table><thead><td><span>TREN NUMARASI</span></td><td><span>QUEUE POS.</span></td><td><span>TIME</span></td><td><span>POS.</span></td><td><span>SIG IN STOP</span></td></thead>"
+    
+    for (let [key, value] of Object.entries(trains)) {
+        html += "<tr><td>" + key + "</td><td></td><td></td><td> IST " + findNextSignalOfBlock(value.position).substring(1) + "</td><td><span>IST " + findNextClosedSignalOfBlock(value.position).substring(1) + "</span></td></tr>"
+    }
+
+    document.getElementById("tyliframe").contentWindow.document.body.innerHTML = html
+
+    document.getElementById("tyltitle").innerHTML = "Text picture nr: 1 " + d.toTimeString().slice(0, 8)
+
+    document.getElementById("tyl").style.display = "flex"
+}
+
 function drawPoints() {
     pointList.forEach(point => {
         if (points[point].status == "local") {
@@ -596,6 +612,64 @@ function findNextSignal(signal) {
                 }
             }
             checkedBlock = leftBlock(checkedBlock)
+        }
+    }
+}
+
+function findNextSignalOfBlock(checkedBlock) {
+    while (true) {
+        if (Array.from(checkedBlock)[0] == "b") {
+            if (blocks[checkedBlock].direction == "right") {
+                if (blocks[checkedBlock].rightsignal) {
+                    return blocks[checkedBlock].rightsignal
+                }
+            } else if (blocks[checkedBlock].direction == "left") {
+                if (blocks[checkedBlock].leftsignal) {
+                    return blocks[checkedBlock].leftsignal
+                }
+            }
+        } else if (Array.from(checkedBlock)[0] == "p") {
+            if (points[checkedBlock].direction == "right") {
+                if (points[checkedBlock].rightsignal) {
+                    return points[checkedBlock].rightsignal
+                }
+            } else if (points[checkedBlock].direction == "left") {
+                if (points[checkedBlock].leftsignal) {
+                    return points[checkedBlock].leftsignal
+                }
+            }
+        }
+        checkedBlock = nextBlock(checkedBlock)
+    }
+}
+
+function findNextClosedSignalOfBlock(checkedBlock) {
+    while (true) {
+        if (Array.from(checkedBlock)[0] == "b") {
+            if (blocks[checkedBlock].direction == "right") {
+                if (blocks[checkedBlock].rightsignal && signals[blocks[checkedBlock].rightsignal].status == "red") {
+                    return blocks[checkedBlock].rightsignal
+                }
+            } else if (blocks[checkedBlock].direction == "left") {
+                if (blocks[checkedBlock].leftsignal && signals[blocks[checkedBlock].leftsignal].status == "red") {
+                    return blocks[checkedBlock].leftsignal
+                }
+            }
+        } else if (Array.from(checkedBlock)[0] == "p") {
+            if (points[checkedBlock].direction == "right") {
+                if (points[checkedBlock].rightsignal && signals[points[checkedBlock].rightsignal].status == "red") {
+                    return points[checkedBlock].rightsignal
+                }
+            } else if (points[checkedBlock].direction == "left") {
+                if (points[checkedBlock].leftsignal && signals[points[checkedBlock].leftsignal].status == "red") {
+                    return points[checkedBlock].leftsignal
+                }
+            }
+        }
+        if (nextBlock(checkedBlock) != "") {
+            checkedBlock = nextBlock(checkedBlock)
+        } else {
+            return " ---"
         }
     }
 }
