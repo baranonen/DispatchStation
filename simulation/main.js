@@ -688,7 +688,7 @@ function findNextClosedSignalOfBlock(checkedBlock) {
     }
 }
 
-var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s200", "s206"]
+var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s208", "s206"]
 
 function updateAutomaticSignals() {
     automaticSignalList.forEach(signal => {
