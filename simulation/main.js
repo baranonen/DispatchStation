@@ -529,7 +529,7 @@ function smg() {
 function tsk() {
     routeWaitingList = []
     automaticSignalList.forEach(signal => {
-        ose(["ose", signal.substr(1)])
+        obl(["obl", signal.substr(1)])
     });
     signalList.forEach(signal => {
         signals[signal].isReserved = "no"
@@ -546,13 +546,13 @@ function tsk() {
     });
 }
 
-function obl(command) {
+function ose(command) {
     if (!automaticSignalList.includes("s" + command[1])) {
         automaticSignalList.push("s" + command[1])
     }
 }
 
-function ose(command) {
+function obl(command) {
     automaticSignalList = automaticSignalList.filter(x => x != "s" + command[1])
     checkedBlock = signals["s" + command[1]].nextblock
     while (true) {
