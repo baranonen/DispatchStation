@@ -580,6 +580,19 @@ function obl(command) {
     }
 }
 
+function tnd(command) {
+    if (command.length == 3) {
+        if (!trains[command[2]] && trains[command[1]]) {
+            trains[command[2]] = trains[command[1]]
+            delete trains[command[1]]
+        } else {
+            output.value = "ILLEGAL COMMAND"
+        }
+    } else {
+        output.value = "ILLEGAL COMMAND"
+    }
+}
+
 function bsk(command) {
     signals["s" + command[1]].control = "closed"
 }

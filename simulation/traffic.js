@@ -220,6 +220,8 @@ function startSimulation() {
                 ksi(command)
             } else if (command[0] == "TYL") {
                 tyl()
+            } else if (command[0] == "TND") {
+                tnd(command)
             } else {
                 output.value = "COMMAND MISSING"
             }
