@@ -113,6 +113,12 @@ function setRoute(requestedRouteText) {
             }
             points[block.slice(0, -1)].status = "set"
             points[block.slice(0, -1)].direction = requestedRoute.direction
+            if (block.slice(-1) == "n") {
+                if (points[block.slice(0, -1)].flankprotection) {
+                    points[points[block.slice(0, -1)].flankprotection].position = "normal"
+                    points[points[block.slice(0, -1)].flankprotection].systemlock = true
+                }
+            }
         }
     });
     routes[requestedRouteText[1] + "-" + requestedRouteText[2]].status = true
@@ -161,6 +167,13 @@ function checkRoutePossible(requestedRouteText) {
             if (points[block.slice(0, -1)].status != "unset") {
                 isPossible = false
             }
+            if (points[block.slice(0, -1)].flankprotection) {
+                if (points[points[block.slice(0, -1)].flankprotection].position == "d") {
+                    if (points[points[block.slice(0, -1)].flankprotection].status != "unset") {
+                        isPossible = false
+                    }
+                } 
+            }
         }
     });
     return isPossible
@@ -203,6 +216,9 @@ function cti(requestedRouteText) {
             if (points[block.slice(0, -1)].status != "occupied") {
                 points[block.slice(0, -1)].status = "cancelled"
                 setTimeout(function () { releaseBlock(block.slice(0, -1)) }, 60000)
+            }
+            if (points[block.slice(0, -1)].flankprotection) {
+                points[points[block.slice(0, -1)].flankprotection].systemlock = false
             }
         }
     });
@@ -248,7 +264,11 @@ function drawPoints() {
                 } else if (points[point].status == "occupied") {
                     document.getElementById("map").getElementById(point + "n").style.stroke = "#FF0000"
                 } else if (points[point].status == "unset") {
-                    document.getElementById("map").getElementById(point + "n").style.stroke = "#C0C0C0"
+                    if (points[point].systemlock == true) {
+                        document.getElementById("map").getElementById(point + "n").style.stroke = "#F5E588"
+                    } else {
+                        document.getElementById("map").getElementById(point + "n").style.stroke = "#C0C0C0"
+                    }
                 } else if (points[point].status == "cancelled") {
                     document.getElementById("map").getElementById(point + "n").style.stroke = "#FF00FF"
                 }
@@ -259,9 +279,15 @@ function drawPoints() {
                 } else if (points[point].status == "occupied") {
                     document.getElementById("map").getElementById(point + "d").style.stroke = "#FF0000"
                 } else if (points[point].status == "unset") {
-                    document.getElementById("map").getElementById(point + "d").style.stroke = "#C0C0C0"
+                    if (points[point].systemlock == true) {
+                        document.getElementById("map").getElementById(point + "d").style.stroke = "#F5E588"
+                    } else {
+                        document.getElementById("map").getElementById(point + "d").style.stroke = "#C0C0C0"
+                    }
                 } else if (points[point].status == "cancelled") {
                     document.getElementById("map").getElementById(point + "d").style.stroke = "#FF00FF"
+                } else if (points[point].systemlock == true) {
+                    document.getElementById("map").getElementById(point + "d").style.stroke = "#F5E588"
                 }
             }
         }
@@ -449,18 +475,31 @@ function blinkSignalMarkers() {
 window.setInterval(blinkSignalMarkers, 350);
 
 function msa(command) {
-    if (points["p" + command[1]].status == "unset") {
+    if (points["p" + command[1]].status == "unset" && points["p" + command[1]].systemlock == false) {
         points["p" + command[1]].position = "diverging"
     }
 }
 
 function mso(command) {
-    if (points["p" + command[1]].status == "unset") {
+    if (points["p" + command[1]].status == "unset" && points["p" + command[1]].systemlock == false) {
         points["p" + command[1]].position = "normal"
     }
 }
 
 function mbl(command) {
+    if (points["p" + command[1]].position == "normal" && points["p" + command[1]].flankprotection) {
+        if (points[points["p" + command[1]].flankprotection].position == "diverging") {
+            if (points[points["p" + command[1]].flankprotection].status != "unset") {
+                return
+            } else {
+            points[points["p" + command[1]].flankprotection].position = "normal"
+            points[points["p" + command[1]].flankprotection].systemlock = true
+            }
+        } else {
+            points[points["p" + command[1]].flankprotection].position = "normal"
+            points[points["p" + command[1]].flankprotection].systemlock = true
+        }
+    }
     if (points["p" + command[1]].status == "unset") {
         points["p" + command[1]].status = "set"
     }
@@ -469,11 +508,14 @@ function mbl(command) {
 function mse(command) {
     if (points["p" + command[1]].status == "set") {
         cancelBlock(command[1])
+        if (points["p" + command[1]].flankprotection) {
+            points[points["p" + command[1]].flankprotection].systemlock = false
+        }
     }
 }
 
 function mlk(command) {
-    if (points["p" + command[1]].status == "unset") {
+    if (points["p" + command[1]].status == "unset" && points["p" + command[1]].systemlock == false) {
         points["p" + command[1]].status = "local"
     }
 }

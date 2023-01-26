@@ -73,6 +73,12 @@ function updateTrain(name) {
         if (isBlockFree(prevBlock(position))) {
             setStatus(prevBlock(position), "unset")
 
+            if (Array.from(prevBlock(position))[0] == "p") { 
+                if (points[prevBlock(position)].flankprotection) {
+                    points[points[prevBlock(position)].flankprotection].systemlock = false
+                }
+            }
+            
             if (prevBlock(trains[name].position) == "b55" || prevBlock(trains[name].position) == "b54") {
                 blocks["b1001"].status = "unset"
             }
