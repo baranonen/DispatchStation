@@ -5,6 +5,7 @@
 
 svg, svg * {
     font-family: "Terminus Bold", monospace;
+    max-height: calc(100vh - 80px);
 }
 
 body {
