@@ -236,8 +236,8 @@ function startSimulation() {
     })
 
     startTime()
-    addHYTrain()
-    addToSchedule(0, "H.Limanı", "Yenikapı (OTG)")
+    window.setTimeout(addHYTrain, 1000)
+    addToSchedule(1000, "H.Limanı", "Yenikapı (OTG)")
     
     window.setTimeout(addHLTrain, 1000 * 60)
     addToSchedule(1000 * 60, "Yenikapı", "H.Limanı (TDR)")

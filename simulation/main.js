@@ -367,6 +367,9 @@ function releaseBlock(block) {
 
 function updateSignals() {
     signalList.forEach(signal => {
+        if (signals[signal].notinscreen == true) {
+            return
+        }
         if (signals[signal].control == "closed") {
             signals[signal].status = "red"
         } else {
@@ -426,6 +429,9 @@ function updateSignals() {
 
 function drawSignals() {
     signalList.forEach(signal => {
+        if (signals[signal].notinscreen == true) {
+            return
+        }
         if (signals[signal].control == "closed") {
             document.getElementById("map").getElementById(signal).style.fill = "#FF0000"
             document.getElementById("map").getElementById(signal).style.stroke = "#FF0000"
@@ -446,6 +452,9 @@ function drawSignals() {
 
 function drawSignalMarkers() {
     signalList.forEach(signal => {
+        if (signals[signal].notinscreen == true) {
+            return
+        }
         if (signals[signal].isReserved == "no") {
             document.getElementById("map").getElementById(signal + "m").style.fill = "#000000"
         } else if (signals[signal].isReserved == "start") {
@@ -459,6 +468,9 @@ function drawSignalMarkers() {
 function blinkSignalMarkers() {
     command = terminal.value.toLocaleUpperCase('en-US').split(" ")
     signalList.forEach(signal => {
+        if (signals[signal].notinscreen == true) {
+            return
+        }
         if (markerBlinkState) {
             document.getElementById("map").getElementById(signal + "m").style.opacity = "0"
             if (command.includes(signal.substr(1)) && !deleteTerminalCommand) {
@@ -643,27 +655,6 @@ function ksi(command) {
     signals["s" + command[1]].control = "auto"
 }
 
-function updateAutomaticBlocks() {
-    automaticBlockList.forEach(block => {
-        if (Array.from(block)[0] == "b") {
-            if (blocks[block].status == "unset") {
-                blocks[block].direction = automaticBlocks[block].direction
-                blocks[block].status = "set"
-            }
-        } else {
-            if (points[block.slice(0, -1)].status == "unset") {
-                points[block.slice(0, -1)].direction = automaticBlocks[block].direction
-                if (block.slice(-1) == "n") {
-                    points[block.slice(0, -1)].position = "normal"
-                } else {
-                    points[block.slice(0, -1)].position = "diverging"
-                }
-                points[block.slice(0, -1)].status = "set"
-            }
-        }
-    });
-}
-
 function findNextSignal(signal) {
     checkedBlock = signals[signal].nextblock
     while (true) {
@@ -743,7 +734,7 @@ function findNextClosedSignalOfBlock(checkedBlock) {
     }
 }
 
-var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s208", "s206"]
+var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s208", "s206", "s146", "s149", "s211", "s210", "s311", "s310"]
 
 function updateAutomaticSignals() {
     automaticSignalList.forEach(signal => {
@@ -863,17 +854,14 @@ function updateLabels() {
     });
 }
 
-updateAutomaticBlocks()
-
 window.setInterval(updateScreen, 100);
 
 function updateScreen() {
+    updateAutomaticSignals()
     drawBlocks()
     drawPoints()
     updateSignals()
     drawSignals()
-    updateAutomaticBlocks()
-    updateAutomaticSignals()
     updateLabels()
     checkWaitingList()
     drawSignalMarkers()
