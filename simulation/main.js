@@ -122,10 +122,6 @@ function setRoute(requestedRouteText) {
         }
     });
     routes[requestedRouteText[1] + "-" + requestedRouteText[2]].status = true
-    if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
-        signals["s" + requestedRouteText[1]].isReserved = "no"
-        signals["s" + requestedRouteText[2]].isReserved = "no"
-    }
     routeWaitingList = routeWaitingList.filter(v => v !== requestedRouteText)
     lastOpenedRoute.route = requestedRouteText
     lastOpenedRoute.seconds = 0
@@ -139,10 +135,8 @@ function updateSecondTime() {
 
 function addRouteToWaitingList(requestedRouteText) {
     if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
-        if (signals["s" + requestedRouteText[1]].isReserved == "no" && signals["s" + requestedRouteText[2]].isReserved == "no") {
+        if (!isSignalReservedForRouteStart("s" + requestedRouteText[1]) && !isSignalReservedForRouteEnd("s" + requestedRouteText[2])) {
             routeWaitingList.push(requestedRouteText)
-            signals["s" + requestedRouteText[1]].isReserved = "start"
-            signals["s" + requestedRouteText[2]].isReserved = "end"
         }
     }
 }
@@ -181,7 +175,7 @@ function checkRoutePossible(requestedRouteText) {
 
 function ytt(requestedRouteText) {
     if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
-        if (signals["s" + requestedRouteText[1]].isReserved == "no" && signals["s" + requestedRouteText[2]].isReserved == "no") {
+        if (!isSignalReservedForRouteStart("s" + requestedRouteText[1]) && !isSignalReservedForRouteEnd("s" + requestedRouteText[2])) {
             if (checkRoutePossible(requestedRouteText)) {
                 setRoute(requestedRouteText)
             } else {
@@ -198,9 +192,12 @@ function ytt(requestedRouteText) {
 }
 
 function yti(requestedRouteText) {
-    routeWaitingList = routeWaitingList.filter(v => v !== requestedRouteText)
-    signals["s" + requestedRouteText[1]].isReserved = "no"
-    signals["s" + requestedRouteText[2]].isReserved = "no"
+    for (let index = 0; index < routeWaitingList.length; index++) {
+        if (routeWaitingList[index][1] == requestedRouteText[1] && routeWaitingList[index][2] == requestedRouteText[2]) {
+            routeWaitingList.splice(index, 1)
+            return
+        }
+    }
 }
 
 function cti(requestedRouteText) {
@@ -455,14 +452,30 @@ function drawSignalMarkers() {
         if (signals[signal].notinscreen == true) {
             return
         }
-        if (signals[signal].isReserved == "no") {
-            document.getElementById("map").getElementById(signal + "m").style.fill = "#000000"
-        } else if (signals[signal].isReserved == "start") {
+        if (isSignalReservedForRouteStart(signal)) {
             document.getElementById("map").getElementById(signal + "m").style.fill = "#03FF00"
-        } else if (signals[signal].isReserved == "end") {
+        } else if (isSignalReservedForRouteEnd(signal)) {
             document.getElementById("map").getElementById(signal + "m").style.fill = "#FF0000"
+        } else {
+            document.getElementById("map").getElementById(signal + "m").style.fill = "#000000"
         }
     });
+}
+
+function isSignalReservedForRouteStart(signal) {
+    for (let index = 0; index < routeWaitingList.length; index++) {
+        if (routeWaitingList[index][1] == signal.substr(1)) {
+            return true
+        }
+    }
+}
+
+function isSignalReservedForRouteEnd(signal) {
+    for (let index = 0; index < routeWaitingList.length; index++) {
+        if (routeWaitingList[index][2] == signal.substr(1)) {
+            return true
+        }
+    }
 }
 
 function blinkSignalMarkers() {
@@ -584,9 +597,6 @@ function tsk() {
     routeWaitingList = []
     automaticSignalList.forEach(signal => {
         obl(["obl", signal.substr(1)])
-    });
-    signalList.forEach(signal => {
-        signals[signal].isReserved = "no"
     });
     blockList.forEach(block => {
         if (blocks[block].status != "occupied") {
