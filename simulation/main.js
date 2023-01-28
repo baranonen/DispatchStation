@@ -13,6 +13,7 @@ var lastOpenedRoute = {}
 var deleteTerminalCommand = false
 var routeWaitingList = []
 var readyForCommand = false
+var signalsReady = true
 
 function nextBlock(block) {
     if (Array.from(block)[0] == "b") {
@@ -595,53 +596,29 @@ function smg() {
 
 function tsk() {
     routeWaitingList = []
-    automaticSignalList.forEach(signal => {
-        obl(["obl", signal.substr(1)])
-    });
     blockList.forEach(block => {
-        if (blocks[block].status != "occupied") {
-            blocks[block].status = "unset"
-        }
+        blocks[block].status = "cancelled"
+        setTimeout(function () { releaseBlock(block) }, 60000)
     });
     pointList.forEach(point => {
-        if (points[point].status != "occupied") {
-            points[point].status = "unset"
-        }
+        points[point].status = "cancelled"
+        setTimeout(function () { releaseBlock(point) }, 60000)
+        points[point].systemlock = false
     });
 }
 
 function ose(command) {
     if (!automaticSignalList.includes("s" + command[1])) {
-        automaticSignalList.push("s" + command[1])
+        if (signals["s" + command[1]].automaticto) {
+            automaticSignalList.push("s" + command[1])
+        } else {
+            output.value = "ILLEGAL COMMAND"
+        }
     }
 }
 
 function obl(command) {
     automaticSignalList = automaticSignalList.filter(x => x != "s" + command[1])
-    checkedBlock = signals["s" + command[1]].nextblock
-    while (true) {
-        if (Array.from(checkedBlock)[0] == "b") {
-            if (blockStatus(checkedBlock) != "occupied") {
-                blocks[checkedBlock].direction = signals["s" + command[1]].direction
-                blocks[checkedBlock].status = "unset"
-                if (checkedBlock == "b55" || checkedBlock == "b54") {
-                    blocks["b1001"].status = "unset"
-                }
-                if (checkedBlock == "b42" || checkedBlock == "b43") {
-                    blocks["b1002"].status = "unset"
-                }
-            }
-        } else {
-            if (blockStatus(checkedBlock) != "occupied") {
-                points[checkedBlock].direction = signals["s" + command[1]].direction
-                points[checkedBlock].status = "unset"
-            }
-        }
-        if (signals["s" + command[1]].possibleends.includes(checkedBlock)) {
-            break
-        }
-        checkedBlock = nextBlock(checkedBlock)
-    }
 }
 
 function tnd(command) {
@@ -655,6 +632,10 @@ function tnd(command) {
     } else {
         output.value = "ILLEGAL COMMAND"
     }
+}
+
+function sth() {
+    signalsReady = true
 }
 
 function bsk(command) {
@@ -744,84 +725,21 @@ function findNextClosedSignalOfBlock(checkedBlock) {
     }
 }
 
-var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s208", "s206", "s146", "s149", "s211", "s210", "s311", "s310"]
+var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s208", "s206", "s149", "s210", "s310"]
 
 function updateAutomaticSignals() {
-    automaticSignalList.forEach(signal => {
-        signalReady = true
-        checkedBlock = signals[signal].nextblock
-        while (signalReady == true) {
-            if (blockStatus(checkedBlock) != "unset") {
-                signalReady = false
-                break
+    if (signalsReady) {
+        signalsReady = false
+        automaticSignalList.forEach(signal => {
+            ytt(["YTT", signal.substring(1), signals[signal].automaticto.substring(1)])
+        })
+    } else {
+        automaticSignalList.forEach(signal => {
+            if (blocks[signals[signal].nextblock].status == "occupied") {
+                ytt(["YTT", signal.substring(1), signals[signal].automaticto.substring(1)])
             }
-            if (signals[signal].possibleends.includes(checkedBlock)) {
-                break
-            }
-            if (checkedBlock == "b55" || checkedBlock == "b54") {
-                if (blockStatus("b1001") != "unset" && blockStatus("b1001") != "set") {
-                    signalReady = false
-                    break
-                }
-            }
-            if (checkedBlock == "b42" || checkedBlock == "b43") {
-                if (blockStatus("b1002") != "unset" && blockStatus("b1002") != "set") {
-                    signalReady = false
-                    break
-                }
-            }
-            if (signals[signal].direction == "right") {
-                if (Array.from(checkedBlock)[0] == "b") {
-                    checkedBlock = blocks[checkedBlock].right
-                } else {
-                    if (points[checkedBlock].position == "diverging") {
-                        checkedBlock = points[checkedBlock].divergingright
-                    } else {
-                        checkedBlock = points[checkedBlock].normalright
-                    }
-                }
-            } else {
-                if (Array.from(checkedBlock)[0] == "b") {
-                    checkedBlock = blocks[checkedBlock].left
-                } else {
-                    if (points[checkedBlock].position == "diverging") {
-                        checkedBlock = points[checkedBlock].divergingleft
-                    } else {
-                        checkedBlock = points[checkedBlock].normalleft
-                    }
-                }
-            }
-        }
-        checkedBlock = signals[signal].nextblock
-        if (signalReady) {
-            while (true) {
-                if (Array.from(checkedBlock)[0] == "b") {
-                    blocks[checkedBlock].direction = signals[signal].direction
-                    blocks[checkedBlock].status = "set"
-                    if (checkedBlock == "b55" || checkedBlock == "b54") {
-                        blocks["b1001"].status = "set"
-                    }
-                    if (checkedBlock == "b42" || checkedBlock == "b43") {
-                        blocks["b1002"].status = "set"
-                    }
-                } else {
-                    points[checkedBlock].direction = signals[signal].direction
-                    if (blockStatus(prevBlock(checkedBlock)) != "set") {
-                        if (points[checkedBlock].position == "diverging") {
-                            points[checkedBlock].position = "normal"
-                        } else if (points[checkedBlock].position == "normal") {
-                            points[checkedBlock].position = "diverging"
-                        }
-                    }
-                    points[checkedBlock].status = "set"
-                }
-                if (signals[signal].possibleends.includes(checkedBlock)) {
-                    break
-                }
-                checkedBlock = nextBlock(checkedBlock)
-            }
-        }
-    });
+        })
+    }
 }
 
 function getTrainInBlock(block) {

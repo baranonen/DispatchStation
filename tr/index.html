@@ -153,21 +153,6 @@
             </tr>
         </table>
         <p>Tanzim etmek istediğiniz rotanın bir kısmı yüksek trafik yüzünden meşgul ise rotaları parçalı olarak başka sinyaller arasında da açabilirsiniz.</p>
-        <h3>Yanlış rota tanzimi</h3>
-        <img src="../assets/misroute.png" alt="A misrouted train">
-        <p>Ekran görüntüsündeki durum gibi, bir tren Otogar (OTG) istasyonunda yanlış perona yönlendirilebilir. Bu problemin çözümü oldukça basittir.</p>
-        <ol>
-            <li>154 numaralı sinyalin otomatiğini "OBL 154" komutu ile iptal edin</li>
-            <li>419 numaralı makasın yönünü "MSO 419" komutu ile normale çevirin</li>
-            <li>156 numaralı sinyali "OSE 156" komutu ile otomatiğe alın</li>
-        </ol>
-        <img src="../assets/fixedmisroute.png" alt="Misrouting problem is fixed">
-        <p>Bloklar boşaldıktan sonra normal işletmeye geri dönebilirsiniz</p>
-        <ol>
-            <li>156 numaralı sinyalin otomatiğini "OBL 156" komutu ile iptal edin</li>
-            <li>419 numaralı makasın yönünü "MSA 419" komutu ile sapmalıya çevirin</li>
-            <li>154 numaralı sinyali "OSE 154" komutu ile otomatiğe alın</li>
-        </ol>
         <h3>Kullanılabilir Komutlar</h3>
         <table>
             <tr>
@@ -219,6 +204,11 @@
                 <td>KSI (Kapalı Sinyal İptali)</td>
                 <td>Sinyali normal operasyona geri döndürür.</td>
                 <td>KSI 155</td>
+            </tr>
+            <tr>
+                <td>STH (Sinyaller Tanzime Hazır)</td>
+                <td>Otomatikte olan bütün sinyallerin rotalarını tanzim eder.</td>
+                <td>STH</td>
             </tr>
             <tr>
                 <td>MBL (Makas Bloke)</td>
