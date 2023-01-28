@@ -193,10 +193,19 @@ function ytt(requestedRouteText) {
 }
 
 function yti(requestedRouteText) {
-    for (let index = 0; index < routeWaitingList.length; index++) {
-        if (routeWaitingList[index][1] == requestedRouteText[1] && routeWaitingList[index][2] == requestedRouteText[2]) {
-            routeWaitingList.splice(index, 1)
-            return
+    if (requestedRouteText.length == 3) {
+        for (let index = 0; index < routeWaitingList.length; index++) {
+            if (routeWaitingList[index][1] == requestedRouteText[1] && routeWaitingList[index][2] == requestedRouteText[2]) {
+                routeWaitingList.splice(index, 1)
+                return
+            }
+        }
+    } else if (requestedRouteText.length == 2) {
+        for (let index = 0; index < routeWaitingList.length; index++) {
+            if (routeWaitingList[index][1] == requestedRouteText[1]) {
+                routeWaitingList.splice(index, 1)
+                return
+            }
         }
     }
 }
