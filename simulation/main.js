@@ -612,7 +612,7 @@ function ose(command) {
         if (signals["s" + command[1]].automaticto) {
             automaticSignalList.push("s" + command[1])
         } else {
-            output.value = "ILLEGAL COMMAND"
+            output.value = "ILLEGAL STATUS"
         }
     }
 }
@@ -627,10 +627,10 @@ function tnd(command) {
             trains[command[2]] = trains[command[1]]
             delete trains[command[1]]
         } else {
-            output.value = "ILLEGAL COMMAND"
+            output.value = "ILLEGAL STATUS"
         }
     } else {
-        output.value = "ILLEGAL COMMAND"
+        output.value = "ILLEGAL STATUS"
     }
 }
 
