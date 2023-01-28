@@ -228,6 +228,8 @@ function startSimulation() {
                 tyl()
             } else if (command[0] == "TND") {
                 tnd(command)
+            } else if (command[0] == "STG") {
+                stg(command)
             } else if (command[0] == "STH") {
                 sth()
             } else {

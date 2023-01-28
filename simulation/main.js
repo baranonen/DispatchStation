@@ -258,6 +258,10 @@ function tyl() {
     document.getElementById("tyl").style.display = "flex"
 }
 
+function stg(command) {
+    tnd(["TND", labelForBlock(signals["s" + command[1]].prevblock), command[2]])
+}
+
 function drawPoints() {
     pointList.forEach(point => {
         if (points[point].status == "local") {
