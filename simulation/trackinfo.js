@@ -154,9 +154,11 @@ var routes = {
     "306-166": { "blocks": ["b45", "b44", "p428d", "b42", "b1002", "p429d", "b35", "p425n", "b50"], "direction": "left", "status": false },
     // Yenikapı Direction - Outside of the screen
     "154-146": { "blocks": ["b12", "p418n", "b11", "p419d", "b1"], "direction": "left", "status": false },
+    "156-146": { "blocks": ["b2", "p419n", "b1"], "direction": "left", "status": false },
     "210-208": { "blocks": ["b10", "p509n", "b57", "p508n", "b56", "b9"], "direction": "left", "status": false },
     // Airport/Kirazlı Direction - Outside of the screen
     "149-155": { "blocks": ["b29", "p417n", "b30", "b31"], "direction": "right", "status": false },
+    "149-153": { "blocks": ["b29", "p417d", "b24", "p418d", "b12", "b13"], "direction": "right", "status": false },
     "207-211": { "blocks": ["b23", "p507n", "b58", "p510n", "b59"], "direction": "right", "status": false },
     "310-304": { "blocks": ["b49", "b48"], "direction": "left", "status": false },
     "307-311": { "blocks": ["b47"], "direction": "right", "status": false },
@@ -176,7 +178,7 @@ var signals = {
     "s153": { "nextblock": "b14", "prevblock": "b13", "direction": "right", "possibleends": ["b19", "b9", "b20", "b51", "b45"], "control": "auto", "status": ""},
     "s204": { "nextblock": "b27", "prevblock": "b20", "direction": "left", "possibleends": ["b14", "b32"], "control": "auto", "status": ""},
     "s304": { "nextblock": "b19", "prevblock": "b48", "direction": "left", "possibleends": ["b19"], "control": "auto", "status": "", "automaticto": "s302"},
-    "s156": { "nextblock": "b2", "prevblock": "b3", "direction": "left", "possibleends": ["b1"], "control": "auto", "status": ""},
+    "s156": { "nextblock": "b2", "prevblock": "b3", "direction": "left", "possibleends": ["b1"], "control": "auto", "status": "", "automaticto": "s146"},
     "s202": { "nextblock": "b6", "prevblock": "b7", "direction": "left", "possibleends": ["b13", "b3"], "control": "auto", "status": ""},
     "s206": { "nextblock": "b7", "prevblock": "b8", "direction": "left", "possibleends": ["b7"], "control": "auto", "status": "", "automaticto": "s202"},
     "s208": { "nextblock": "b8", "prevblock": "b9", "direction": "left", "possibleends": ["b8"], "control": "auto", "status": "", "automaticto": "s206"},
