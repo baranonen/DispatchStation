@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Objects | DispatchStation</title>
+    <meta name="title" content="Track Objects | DispatchStation">
+    <meta name="description" content="Simulation of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Track Objects | DispatchStation">
+    <meta property="og:description" content="Simulation of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
+    <meta property="og:image" content="https://dispatchstation.baranonen.com/favicon.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Track Objects | DispatchStation">
+    <meta property="twitter:description" content="Simulation of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
+    <meta property="twitter:image" content="https://dispatchstation.baranonen.com/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
+</head>
+<body>
+    <h1>DispatchStation</h1>
+    <p>Web-based simulation of the EBICOS 900 traffic management and dispatching system</p>
+    <details>
+        <summary>Navigation</summary>
+        <a href="../../">Home</a>
+        <a href="../../simulation/">Simulation</a>
+        <br>
+        <span>Docs</span>
+        <hr>
+        <a href="../quickstart/">Quick Start</a>
+        <a href="../commands/">Commands</a>
+        <a href="../trackobjects/">Track Objects</a>
+        <a href="../userinterface/">User Interface</a>
+    </details>
+    <h2>Track Objects</h2>
+    <p>Every signals, point machines etc. which are connected to the signalling system are called track objects.</p>
+    <h3>Signals</h3>
+    <p>Signals are the main communication way between the train drivers and the signalling system. They have two aspects; red and green. Because of this, the speed limits are transmitted to the train using the EBICAB 700 ATC system.</p>
+    <p>Here are some examples of how signals can be displayed in the EBICOS system:</p>
+    <ul>
+        <li>
+            <h3>Blank</h3>
+            <img src="../../assets/blank.jpg" alt="">
+            <p>There is no route set and the aspect is red.</p>
+        </li>
+        <li>
+            <h3>Red</h3>
+            <img src="../../assets/red.jpg" alt="">
+            <p>Signal is at the end of a route and the aspect is red.</p>
+        </li>
+        <li>
+            <h3>Blocked</h3>
+            <img src="../../assets/redblocked.jpg" alt="">
+            <p>The signal is closed and blocked with the BSK command. The aspect is red.</p>
+        </li>
+        <li>
+            <h3>Green</h3>
+            <img src="../../assets/green.jpg" alt="">
+            <p>A route from this signal is set and the train can continue. The aspect is green.</p>
+        </li>
+        <li>
+            <h3>Cancelled</h3>
+            <img src="../../assets/cancelled.jpg" alt="">
+            <p>A route from this signal was set but then it was cancelled. The signal will stay closed for a minute for safety. The aspect is red.</p>
+        </li>
+        <li>
+            <h3>End of Track / Signalling</h3>
+            <img src="../../assets/endsignal.jpg" alt="">
+            <p>End of track / signalling signals have a different shape, but the usage is the same. They always show the red aspect.</p>
+        </li>
+    </ul>
+    <p>The queued routes are also shown with small triangles.</p>
+    <ul>
+        <li>
+            <h3>Route Start</h3>
+            <img src="../../assets/greenstart.jpg" alt="">
+            <p>A route starting from this signal is queued.</p>
+        </li>
+        <li>
+            <h3>Route End</h3>
+            <img src="../../assets/greenend.jpg" alt="">
+            <p>A route ending at this signal is queued.</p>
+        </li>
+    </ul>
+    <h3>Switches</h3>
+    <p>Switches can be moved to diverging/normal positions using the attached point machines. They can be displayed like this:</p>
+    <ul>
+        <li>
+            <h3>Normal</h3>
+            <img src="../../assets/pointnormal.jpg" alt="">
+            <p>The switch is in normal position.</p>
+        </li>
+        <li>
+            <h3>Diverging</h3>
+            <img src="../../assets/pointdiverging.jpg" alt="">
+            <p>The switch is in diverging position.</p>
+        </li>
+        <li>
+            <h3>Local Control</h3>
+            <img src="../../assets/pointlocal.jpg" alt="">
+            <p>The switch is in local control mode. It can't be controlled from the EBICOS system and its position can't be seen.</p>
+        </li>
+        <li>
+            <h3>Flank Protection</h3>
+            <img src="../../assets/flankprotection.jpg" alt="">
+            <p>The switch is in flank protection. It'll stay locked in this position until the route which is reached when following the diverging position is clear.</p>
+        </li>
+    </ul>
+    <h3>Track Circuits</h3>
+    <p>Track circuits detect the existence of a train at the part of a line. Since only one train can be in a single block, they serve a critical purpose.</p>
+    <ul>
+        <li>
+            <h3>Gray</h3>
+            <img src="../../assets/grayblock.jpg" alt="">
+            <p>There is no route set.</p>
+        </li>
+        <li>
+            <h3>Green</h3>
+            <img src="../../assets/greenblock.jpg" alt="">
+            <p>A route via this track circuit is set.</p>
+        </li>
+        <li>
+            <h3>Red</h3>
+            <img src="../../assets/redblock.jpg" alt="">
+            <p>The track circuit is occupied.</p>
+        </li>
+        <li>
+            <h3>Purple</h3>
+            <img src="../../assets/purpleblock.jpg" alt="">
+            <p>A route via this track circuit was set but then cancelled.</p>
+        </li>
+    </ul>
+    <footer>
+        <a href="https://github.com/baranonen/DispatchStation">GitHub</a>
+        <br>
+        <a href="../../simulation/">Simulation</a>
+    </footer>
+</body>
+</html>

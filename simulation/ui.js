@@ -1,5 +1,7 @@
 "use strict"
 
+var shownScreen = "all"
+
 function firstScreen() {
     document.getElementById("firstscreen").style.display = ""
     document.getElementById("secondscreen").style.display = "none"
@@ -19,14 +21,6 @@ function closetyl() {
     document.getElementById("tyl").style.display = "none"
 }
 
-function hideTimetable() {
-    document.getElementById("timetable").style.display = "none"
-}
-
-function showTimetable() {
-    document.getElementById("timetable").style.display = ""
-}
-
 function startTime() {
     var today = new Date();
     var h = today.getHours();
@@ -44,7 +38,7 @@ function startTime() {
     document.getElementById('clock').innerHTML =
         h + " " + m + " " + s;
     document.getElementById('date').innerHTML =
-        y + " " + d + " " + mo;
+        y + " " + mo + " " + d;
     document.getElementById('day').innerHTML = ['SA SU MO', 'SU MO TU', 'MO TU WE', 'TU WE TH', 'WE TH FR', 'TH FR SA', 'FR SA SU'][today.getDay()]
     var t = setTimeout(startTime, 500);
 }
@@ -73,3 +67,35 @@ function toggleFullScreen() {
         }
     }
 }
+
+function displayScreen(requestedScreen) {
+    if (requestedScreen == "horizontal") {
+        screenList.forEach(screen => {
+            document.getElementById(screen).style.display = "flex"
+        });
+        document.getElementById("tracks").classList = "tracks horizontal"
+        return
+    }
+    if (requestedScreen == "wrap") {
+        screenList.forEach(screen => {
+            document.getElementById(screen).style.display = "flex"
+        });
+        document.getElementById("tracks").classList = "tracks wrap"
+        return
+    }
+    screenList.forEach(screen => {
+        if (screen == requestedScreen) {
+            document.getElementById(screen).style.display = "flex"
+        } else {
+            document.getElementById(screen).style.display = "none"
+        } 
+    });
+    document.getElementById("tracks").classList = "tracks"
+}
+
+screenList.forEach(screen => {
+    document.getElementById("tracks").innerHTML += screens[screen]
+    document.getElementById("screenswitch").innerHTML += `<svg id="${screen}btn" viewBox="0 0 1000 445" onclick="displayScreen('${screen}')">${document.getElementById(screen).innerHTML}</svg>`
+});
+
+checkRouteIntegrity()

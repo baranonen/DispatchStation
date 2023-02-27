@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Interface | DispatchStation</title>
+    <meta name="title" content="User Interface | DispatchStation">
+    <meta name="description" content="User Interface of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="User Interface | DispatchStation">
+    <meta property="og:description" content="User Interface of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
+    <meta property="og:image" content="https://dispatchstation.baranonen.com/favicon.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="User Interface | DispatchStation">
+    <meta property="twitter:description" content="User Interface of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
+    <meta property="twitter:image" content="https://dispatchstation.baranonen.com/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
+</head>
+<body>
+    <h1>DispatchStation</h1>
+    <p>Web-based simulation of the EBICOS 900 traffic management and dispatching system</p>
+    <details>
+        <summary>Navigation</summary>
+        <a href="../../">Home</a>
+        <a href="../../simulation/">Simulation</a>
+        <br>
+        <span>Docs</span>
+        <hr>
+        <a href="../quickstart/">Quick Start</a>
+        <a href="../commands/">Commands</a>
+        <a href="../trackobjects/">Track Objects</a>
+        <a href="../userinterface/">User Interface</a>
+    </details>
+    <h2>User Interface</h2>
+    <p>The system in the Istanbul M1 metro line runs in 4 screens at the same time in reality. Since this is not possible for every user of the simulation, some optimizations are made.</p>
+    <img src="../../assets/ebicos.jpg" alt="Dispatcher interface of the Istanbul Metro M1 line">
+    <small>Real EBICOS installation on the line</small>
+    <h3>Screen Switcher</h3>
+    <img src="../../assets/screenswitch.jpg" alt="The screen switcher">
+    <ul>
+        <li>
+            <p><b>H</b> stands for horizontal and displays the entire line horizontally. This is useful for wider and multiple displays.</p>
+        </li>
+        <li>
+            <p><b>W</b> stands for wrap and displays the line in two rows. This is useful when you're using a normal screen and want to see all of the track objects.</p>
+        </li>
+    </ul>
+    <ol>
+        <li>
+            <p>This screen displays the Yenikapı, Aksaray, Emniyet, Ulubatlı, Bayrampaşa, Sağmalcılar and Kocatepe stations.</p>
+        </li>
+        <li>
+            <p>This screen displays the Otogar, Terazidere and Esenler stations.</p>
+        </li>
+        <li>
+            <p>This screen displays the Davutpaşa, Merter, Zeytinbunu and Menderes stations.</p>
+        </li>
+        <li>
+            <p>This screen displays the Bakırköy, Bahçelievler, Ataköy, Yenibosna, Dünya Ticaret Merkezi, Havalimanı, Üçyüzlü, Bağcılar and Kirazlı stations.</p>
+        </li>
+    </ol>
+    <h3>Date & Time Window</h3>
+    <img src="../../assets/dateandtime.jpg" alt="The date and time window">
+    <p>You can click the Date & Time Window to switch to full screen mode.</p>
+    <h3>Output Window</h3>
+    <img src="../../assets/output.png" alt="The output window">
+    <p>When needed, the system can display an error message regarding to the last command here. Writing anything on the terminal will delete the message being shown.</p>
+    <h3>Terminal</h3>
+    <img src="../../assets/terminal.png" alt="The terminal">
+    <p>Commands are written to the terminal, which is found at the bottom right of the screen. More info can be found in the <a href="../commands/">Commands</a> page.</p>
+    <footer>
+        <a href="https://github.com/baranonen/DispatchStation">GitHub</a>
+        <br>
+        <a href="../../simulation/">Simulation</a>
+    </footer>
+</body>
+</html>

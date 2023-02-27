@@ -41,6 +41,62 @@ function nextBlock(block) {
     }
 }
 
+function nextBlockForTrain(train) {
+    var block = trains[train].position
+    if (Array.from(block)[0] == "b") {
+        if (trains[train].direction == "left") {
+            return blocks[block].left
+        } else {
+            return blocks[block].right
+        }
+    } else if (Array.from(block)[0] == "p") {
+        if (trains[train].direction  == "right") {
+            if (points[block].position == "normal") {
+                return points[block].normalright
+            } else if (points[block].position == "diverging") {
+                return points[block].divergingright
+            }
+        } else if (trains[train].direction == "left") {
+            if (points[block].position == "normal") {
+                return points[block].normalleft
+            } else if (points[block].position == "diverging") {
+                return points[block].divergingleft
+            }
+        } else {
+            return ""
+        }
+    }
+}
+
+function prevBlockForTrain(train) {
+    var block = trains[train].position
+    if (Array.from(block)[0] == "b") {
+        if (trains[train].direction == "left") {
+            return blocks[block].right
+        } else if (trains[train].direction == "right") {
+            return blocks[block].left
+        } else {
+            return ""
+        }
+    } else if (Array.from(block)[0] == "p") {
+        if (trains[train].direction == "right") {
+            if (points[block].position == "normal") {
+                return points[block].normalleft
+            } else if (points[block].position == "diverging") {
+                return points[block].divergingleft
+            }
+        } else if (trains[train].direction == "left") {
+            if (points[block].position == "normal") {
+                return points[block].normalright
+            } else if (points[block].position == "diverging") {
+                return points[block].divergingright
+            }
+        } else {
+            return ""
+        }
+    }
+}
+
 function leftBlock(block) {
     if (Array.from(block)[0] == "b") {
         return blocks[block].left
@@ -62,6 +118,17 @@ function rightBlock(block) {
         } else if (points[block].position == "diverging") {
             return points[block].divergingright
         }
+    }
+}
+
+function prevBlockOfSignal(signal) {
+    if (!signals[signal].nextblock) {
+        return signals[signal].prevblock
+    }
+    if (signals[signal].direction == "right") {
+        return blocks[signals[signal].nextblock].left
+    } else if (signals[signal].direction == "left") {
+        return blocks[signals[signal].nextblock].right
     }
 }
 
@@ -101,6 +168,28 @@ function prevSetBlock(block) {
     }
 }
 
+function getLeftSignal(block) {
+    var result = ""
+    signalList.forEach(signal => {
+        if (prevBlockOfSignal(signal) == block && signals[signal].direction == "left") {
+            result = signal
+            return
+        }
+    });
+    return result
+}
+
+function getRightSignal(block) {
+    var result = ""
+    signalList.forEach(signal => {
+        if (prevBlockOfSignal(signal) == block && signals[signal].direction == "right") {
+            result = signal
+            return
+        }
+    });
+    return result
+}
+
 function setRoute(requestedRouteText) {
     requestedRoute.blocks.forEach(block => {
         if (Array.from(block)[0] == "b") {
@@ -122,7 +211,6 @@ function setRoute(requestedRouteText) {
             }
         }
     });
-    routes[requestedRouteText[1] + "-" + requestedRouteText[2]].status = true
     routeWaitingList = routeWaitingList.filter(v => v !== requestedRouteText)
     lastOpenedRoute.route = requestedRouteText
     lastOpenedRoute.seconds = 0
@@ -135,6 +223,9 @@ function updateSecondTime() {
 }
 
 function addRouteToWaitingList(requestedRouteText) {
+    if (requestedRoute == "") {
+        return false
+    }
     if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
         if (!isSignalReservedForRouteStart("s" + requestedRouteText[1]) && !isSignalReservedForRouteEnd("s" + requestedRouteText[2])) {
             routeWaitingList.push(requestedRouteText)
@@ -150,9 +241,51 @@ function checkWaitingList() {
     });
 }
 
+function findRoute(requestedRouteText) {
+    if (signals["s" + requestedRouteText[1]].direction == signals["s" + requestedRouteText[2]].direction) {
+        if (signals["s" + requestedRouteText[1]].direction == "right") {
+            var route = findShortestPath(rightGraph, signals["s" + requestedRouteText[1]].nextblock, prevBlockOfSignal("s" + requestedRouteText[2]))
+        } else {
+            var route = findShortestPath(leftGraph, signals["s" + requestedRouteText[1]].nextblock, prevBlockOfSignal("s" + requestedRouteText[2]))
+        }
+        if (route.distance == "Infinity") {
+            if (signals["s" + requestedRouteText[1]].nextblock != prevBlockOfSignal("s" + requestedRouteText[2])) {
+                return ""
+            }
+        }
+        var finalRoute = {blocks: [], direction: signals["s" + requestedRouteText[1]].direction}
+        route.path.forEach(block => {
+            if (Array.from(block)[0] == "b") {
+                finalRoute.blocks.push(block)
+            } else if (Array.from(block)[0] == "p") {
+                if (points[block].divergingright != points[block].normalright) {
+                    if (route.path.includes(points[block].divergingright)) {
+                        finalRoute.blocks.push(block + "d")
+                    } else if (route.path.includes(points[block].normalright)) {
+                        finalRoute.blocks.push(block + "n")
+                    }
+                } else if (points[block].divergingleft != points[block].normalleft) {
+                    if (route.path.includes(points[block].divergingleft)) {
+                        finalRoute.blocks.push(block + "d")
+                    } else if (route.path.includes(points[block].normalleft)) {
+                        finalRoute.blocks.push(block + "n")
+                    }
+                }
+            }
+        });
+        return finalRoute
+    } else {
+        return ""
+    }
+}
+
+
 function checkRoutePossible(requestedRouteText) {
     isPossible = true
-    requestedRoute = routes[requestedRouteText[1] + "-" + requestedRouteText[2]]
+    requestedRoute = findRoute(requestedRouteText)
+    if (requestedRoute == "") {
+        return false
+    }
     requestedRoute.blocks.forEach(block => {
         if (Array.from(block)[0] == "b") {
             if (blocks[block].status != "unset") {
@@ -163,7 +296,7 @@ function checkRoutePossible(requestedRouteText) {
                 isPossible = false
             }
             if (points[block.slice(0, -1)].flankprotection) {
-                if (points[points[block.slice(0, -1)].flankprotection].position == "d") {
+                if (points[points[block.slice(0, -1)].flankprotection].position == "diverging") {
                     if (points[points[block.slice(0, -1)].flankprotection].status != "unset") {
                         isPossible = false
                     }
@@ -175,19 +308,24 @@ function checkRoutePossible(requestedRouteText) {
 }
 
 function ytt(requestedRouteText) {
-    if (signals["s" + requestedRouteText[1]] && signals["s" + requestedRouteText[2]]) {
-        if (!isSignalReservedForRouteStart("s" + requestedRouteText[1]) && !isSignalReservedForRouteEnd("s" + requestedRouteText[2])) {
-            if (checkRoutePossible(requestedRouteText)) {
-                setRoute(requestedRouteText)
-            } else {
-                addRouteToWaitingList(requestedRouteText)
+    if (requestedRouteText.length < 3) {
+        output.value = "COMMAND MISSING"
+    }
+    for (let via = 1; via < requestedRouteText.length - 1; via++) {
+        if (signals["s" + requestedRouteText[via]] && signals["s" + requestedRouteText[via + 1]]) {
+            if (!isSignalReservedForRouteStart("s" + requestedRouteText[via]) && !isSignalReservedForRouteEnd("s" + requestedRouteText[via + 1])) {
+                if (checkRoutePossible([requestedRouteText[via - 1], requestedRouteText[via], requestedRouteText[via + 1]])) {
+                    setRoute([requestedRouteText[via - 1], requestedRouteText[via], requestedRouteText[via + 1]])
+                } else {
+                    addRouteToWaitingList([requestedRouteText[via - 1], requestedRouteText[via], requestedRouteText[via + 1]])
+                }
             }
-        }
-    } else {
-        if (checkRoutePossible(requestedRouteText)) {
-            setRoute(requestedRouteText)
         } else {
-            addRouteToWaitingList(requestedRouteText)
+            if (checkRoutePossible([requestedRouteText[via - 1], requestedRouteText[via], requestedRouteText[via + 1]])) {
+                setRoute([requestedRouteText[via - 1], requestedRouteText[via], requestedRouteText[via + 1]])
+            } else {
+                addRouteToWaitingList([requestedRouteText[via - 1], requestedRouteText[via], requestedRouteText[via + 1]])
+            }
         }
     }
 }
@@ -212,7 +350,7 @@ function yti(requestedRouteText) {
 
 function cti(requestedRouteText) {
     isPossible = true
-    requestedRoute = routes[requestedRouteText[1] + "-" + requestedRouteText[2]]
+    requestedRoute = findRoute(requestedRouteText)
     requestedRoute.blocks.forEach(block => {
         if (Array.from(block)[0] == "b") {
             if (blocks[block].status != "occupied") {
@@ -229,7 +367,6 @@ function cti(requestedRouteText) {
             }
         }
     });
-    routes[requestedRouteText[1] + "-" + requestedRouteText[2]].status = false
 }
 
 function tyi(requestedRouteText) {
@@ -258,47 +395,68 @@ function tyl() {
     document.getElementById("tyl").style.display = "flex"
 }
 
+function tnd(command) {
+    if (command.length == 3) {
+        if (!trains[command[2]] && trains[command[1]]) {
+            trains[command[2]] = trains[command[1]]
+            delete trains[command[1]]
+        } else {
+            output.value = "ILLEGAL STATUS"
+        }
+    } else {
+        output.value = "ILLEGAL STATUS"
+    }
+}
+
+function tns(command) {
+    tnd(["TND", command[1], ""])
+}
+
 function stg(command) {
-    tnd(["TND", labelForBlock(signals["s" + command[1]].prevblock), command[2]])
+    tnd(["TND", labelForBlock(prevBlockOfSignal("s" + command[1])), command[2]])
+}
+
+function sts(command) {
+    stg(["STG", command[1], ""])
 }
 
 function drawPoints() {
     pointList.forEach(point => {
         if (points[point].status == "local") {
-            document.getElementById("map").getElementById(point + "n").style.stroke = "#0000FF"
-            document.getElementById("map").getElementById(point + "d").style.stroke = "#0000FF"
+            document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#0000FF"
+            document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#0000FF"
         } else {
             if (points[point].position == "normal") {
-                document.getElementById("map").getElementById(point + "d").style.stroke = "#ffffff00"
+                document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#ffffff00"
                 if (points[point].status == "set") {
-                    document.getElementById("map").getElementById(point + "n").style.stroke = "#03FF00"
+                    document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#03FF00"
                 } else if (points[point].status == "occupied") {
-                    document.getElementById("map").getElementById(point + "n").style.stroke = "#FF0000"
+                    document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#FF0000"
                 } else if (points[point].status == "unset") {
                     if (points[point].systemlock == true) {
-                        document.getElementById("map").getElementById(point + "n").style.stroke = "#F5E588"
+                        document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#F5E588"
                     } else {
-                        document.getElementById("map").getElementById(point + "n").style.stroke = "#C0C0C0"
+                        document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#C0C0C0"
                     }
                 } else if (points[point].status == "cancelled") {
-                    document.getElementById("map").getElementById(point + "n").style.stroke = "#FF00FF"
+                    document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#FF00FF"
                 }
             } else {
-                document.getElementById("map").getElementById(point + "n").style.stroke = "#ffffff00"
+                document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#ffffff00"
                 if (points[point].status == "set") {
-                    document.getElementById("map").getElementById(point + "d").style.stroke = "#03FF00"
+                    document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#03FF00"
                 } else if (points[point].status == "occupied") {
-                    document.getElementById("map").getElementById(point + "d").style.stroke = "#FF0000"
+                    document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#FF0000"
                 } else if (points[point].status == "unset") {
                     if (points[point].systemlock == true) {
-                        document.getElementById("map").getElementById(point + "d").style.stroke = "#F5E588"
+                        document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#F5E588"
                     } else {
-                        document.getElementById("map").getElementById(point + "d").style.stroke = "#C0C0C0"
+                        document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#C0C0C0"
                     }
                 } else if (points[point].status == "cancelled") {
-                    document.getElementById("map").getElementById(point + "d").style.stroke = "#FF00FF"
+                    document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#FF00FF"
                 } else if (points[point].systemlock == true) {
-                    document.getElementById("map").getElementById(point + "d").style.stroke = "#F5E588"
+                    document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#F5E588"
                 }
             }
         }
@@ -309,27 +467,27 @@ function drawBlocks() {
     blockList.forEach(block => {
         if (blocks[block].status == "occupied") {
             if (blocks[block].isOverlapBlock) {
-                document.getElementById("map").getElementById(block).style.fill = "#FF0000"
+                document.getElementById(blocks[block].screen).getElementById(block).style.fill = "#FF0000"
             } else {
-                document.getElementById("map").getElementById(block).style.stroke = "#FF0000"
+                document.getElementById(blocks[block].screen).getElementById(block).style.stroke = "#FF0000"
             }
         } else if (blocks[block].status == "cancelled") {
             if (blocks[block].isOverlapBlock) {
-                document.getElementById("map").getElementById(block).style.fill = "#FF00FF"
+                document.getElementById(blocks[block].screen).getElementById(block).style.fill = "#FF00FF"
             } else {
-                document.getElementById("map").getElementById(block).style.stroke = "#FF00FF"
+                document.getElementById(blocks[block].screen).getElementById(block).style.stroke = "#FF00FF"
             }
         } else if (blocks[block].status == "set") {
             if (blocks[block].isOverlapBlock) {
-                document.getElementById("map").getElementById(block).style.fill = "#03FF00"
+                document.getElementById(blocks[block].screen).getElementById(block).style.fill = "#03FF00"
             } else {
-                document.getElementById("map").getElementById(block).style.stroke = "#03FF00"
+                document.getElementById(blocks[block].screen).getElementById(block).style.stroke = "#03FF00"
             }
         } else if (blocks[block].status == "unset") {
             if (blocks[block].isOverlapBlock) {
-                document.getElementById("map").getElementById(block).style.fill = "#C0C0C0"
+                document.getElementById(blocks[block].screen).getElementById(block).style.fill = "#C0C0C0"
             } else {
-                document.getElementById("map").getElementById(block).style.stroke = "#C0C0C0"
+                document.getElementById(blocks[block].screen).getElementById(block).style.stroke = "#C0C0C0"
             }
         }
     });
@@ -376,20 +534,67 @@ function releaseBlock(block) {
     }
 }
 
+function updateSignalAspects() {
+    signalList.forEach(signal => {
+        if (signals[signal].control == "closed") {
+            signals[signal].aspect = "red"
+            return
+        }
+        var currentControlledBlock = signals[signal].nextblock
+        while (true) {
+            if (blockStatus(currentControlledBlock) == "set" && blockDirection(currentControlledBlock) == signals[signal].direction) {
+                if (Array.from(currentControlledBlock)[0] == "b") {
+                    if (blockDirection(currentControlledBlock) == "left") {
+                        if (getLeftSignal(currentControlledBlock) != "") {
+                            signals[signal].aspect = "green"
+                            return
+                        }
+                    } else if (blockDirection(currentControlledBlock) == "right") {
+                        if (getRightSignal(currentControlledBlock) && getRightSignal(currentControlledBlock) != "") {
+                            signals[signal].aspect = "green"
+                            return
+                        }
+                    }
+                }
+                currentControlledBlock = nextBlock(currentControlledBlock)
+            } else {
+                signals[signal].aspect = "red"
+                return
+            }
+        }
+    });
+}
+
 function updateSignals() {
     signalList.forEach(signal => {
         if (signals[signal].notinscreen == true) {
+            if (signals[signal].endsignal) {
+                return
+            }
+            if (blocks[signals[signal].nextblock].status == "set") {
+                signals[signal].status = "green"
+            } else {
+                signals[signal].status = "red"
+            }
+            return
+        }
+        if (signals[signal].endsignal) {
+            if (blocks[prevBlockOfSignal(signal)].status != "unset") {
+                signals[signal].status = "red"
+            } else {
+                signals[signal].status = ""
+            }
             return
         }
         if (signals[signal].control == "closed") {
             signals[signal].status = "red"
         } else {
-            if (blockStatus(signals[signal].prevblock) == "unset") {
+            if (blockStatus(prevBlockOfSignal(signal)) == "unset") {
                 if (blockStatus(signals[signal].nextblock) == "unset" || signals[signal].direction != blocks[signals[signal].nextblock].direction) {
                     signals[signal].status = ""
                     return
                 }
-            } else if (signals[signal].direction != blocks[signals[signal].prevblock].direction) {
+            } else if (signals[signal].direction != blocks[prevBlockOfSignal(signal)].direction) {
                 signals[signal].status = ""
                 return
             }
@@ -400,8 +605,16 @@ function updateSignals() {
                     signalShouldBe = "purple"
                     break
                 }
-                if (signals[signal].possibleends.includes(checkedBlock)) {
-                    break
+                if (Array.from(checkedBlock)[0] == "b") {
+                    if (signals[signal].direction == "right") {
+                        if (getRightSignal(checkedBlock) != "") {
+                            break
+                        }
+                    } else if (signals[signal].direction == "left") {
+                        if (getLeftSignal(checkedBlock) != "") {
+                            break
+                        }
+                    }
                 }
                 if (signals[signal].direction == "right") {
                     checkedBlock = rightBlock(checkedBlock)
@@ -428,8 +641,16 @@ function updateSignals() {
                     signalShouldBe = "red"
                     break
                 }
-                if (signals[signal].possibleends.includes(checkedBlock)) {
-                    break
+                if (Array.from(checkedBlock)[0] == "b") {
+                    if (signals[signal].direction == "right") {
+                        if (getRightSignal(checkedBlock) != "") {
+                            break
+                        }
+                    } else if (signals[signal].direction == "left") {
+                        if (getLeftSignal(checkedBlock) != "") {
+                            break
+                        }
+                    }
                 }
                 checkedBlock = nextBlock(checkedBlock)
             }
@@ -443,19 +664,27 @@ function drawSignals() {
         if (signals[signal].notinscreen == true) {
             return
         }
+        if (signals[signal].endsignal) {
+            if (signals[signal].status == "red") {
+                document.getElementById(signals[signal].screen).getElementById(signal).style.fill = "#FF0000"
+            } else {
+                document.getElementById(signals[signal].screen).getElementById(signal).style.fill = "#C0C0C0"
+            }
+            return
+        }
         if (signals[signal].control == "closed") {
-            document.getElementById("map").getElementById(signal).style.fill = "#FF0000"
-            document.getElementById("map").getElementById(signal).style.stroke = "#FF0000"
+            document.getElementById(signals[signal].screen).getElementById(signal).style.fill = "#FF0000"
+            document.getElementById(signals[signal].screen).getElementById(signal).style.stroke = "#FF0000"
         } else {
-            document.getElementById("map").getElementById(signal).style.fill = "#FF000000"
+            document.getElementById(signals[signal].screen).getElementById(signal).style.fill = "#FF000000"
             if (signals[signal].status == "green") {
-                document.getElementById("map").getElementById(signal).style.stroke = "#03FF00"
+                document.getElementById(signals[signal].screen).getElementById(signal).style.stroke = "#03FF00"
             } else if (signals[signal].status == "red") {
-                document.getElementById("map").getElementById(signal).style.stroke = "#FF0000"
+                document.getElementById(signals[signal].screen).getElementById(signal).style.stroke = "#FF0000"
             } else if (signals[signal].status == "purple") {
-                document.getElementById("map").getElementById(signal).style.stroke = "#FF00FF"
+                document.getElementById(signals[signal].screen).getElementById(signal).style.stroke = "#FF00FF"
             } else if (signals[signal].status == "") {
-                document.getElementById("map").getElementById(signal).style.stroke = "#C0C0C0"
+                document.getElementById(signals[signal].screen).getElementById(signal).style.stroke = "#C0C0C0"
             }
         }
     });
@@ -466,12 +695,14 @@ function drawSignalMarkers() {
         if (signals[signal].notinscreen == true) {
             return
         }
-        if (isSignalReservedForRouteStart(signal)) {
-            document.getElementById("map").getElementById(signal + "m").style.fill = "#03FF00"
-        } else if (isSignalReservedForRouteEnd(signal)) {
-            document.getElementById("map").getElementById(signal + "m").style.fill = "#FF0000"
-        } else {
-            document.getElementById("map").getElementById(signal + "m").style.fill = "#000000"
+        if (document.getElementById(signals[signal].screen).getElementById(signal + "m")) {
+            if (isSignalReservedForRouteStart(signal)) {
+                document.getElementById(signals[signal].screen).getElementById(signal + "m").style.fill = "#03FF00"
+            } else if (isSignalReservedForRouteEnd(signal)) {
+                document.getElementById(signals[signal].screen).getElementById(signal + "m").style.fill = "#FF0000"
+            } else {
+                document.getElementById(signals[signal].screen).getElementById(signal + "m").style.fill = "#000000"
+            }
         }
     });
 }
@@ -498,14 +729,16 @@ function blinkSignalMarkers() {
         if (signals[signal].notinscreen == true) {
             return
         }
-        if (markerBlinkState) {
-            document.getElementById("map").getElementById(signal + "m").style.opacity = "0"
-            if (command.includes(signal.substr(1)) && !deleteTerminalCommand) {
-                document.getElementById("map").getElementById(signal).style.opacity = "0"
+        if (document.getElementById(signals[signal].screen).getElementById(signal + "m")) {
+            if (markerBlinkState) {
+                document.getElementById(signals[signal].screen).getElementById(signal + "m").style.opacity = "0"
+                if (command.includes(signal.substr(1)) && !deleteTerminalCommand) {
+                    document.getElementById(signals[signal].screen).getElementById(signal).style.opacity = "0"
+                }
+            } else {
+                document.getElementById(signals[signal].screen).getElementById(signal + "m").style.opacity = "1"
+                document.getElementById(signals[signal].screen).getElementById(signal).style.opacity = "1"
             }
-        } else {
-            document.getElementById("map").getElementById(signal + "m").style.opacity = "1"
-            document.getElementById("map").getElementById(signal).style.opacity = "1"
         }
     });
     markerBlinkState = !markerBlinkState
@@ -566,23 +799,29 @@ function mmk(command) {
 }
 
 function updateCurrentlyDisplaying() {
-    if (currentlyDisplaying == "switchnumbers") {
-        document.getElementById("map").getElementById("switches").style.fill = "#FF00FF"
-        document.getElementById("map").getElementById("signals").style.fill = "#00000000"
-        document.getElementById("map").getElementById("trackcircuits").style.fill = "#00000000"
-    } else if (currentlyDisplaying == "signalnumbers") {
-        document.getElementById("map").getElementById("switches").style.fill = "#00000000"
-        document.getElementById("map").getElementById("signals").style.fill = "#F5E588"
-        document.getElementById("map").getElementById("trackcircuits").style.fill = "#00000000"
-    } else if (currentlyDisplaying == "trackcircuits") {
-        document.getElementById("map").getElementById("switches").style.fill = "#00000000"
-        document.getElementById("map").getElementById("signals").style.fill = "#00000000"
-        document.getElementById("map").getElementById("trackcircuits").style.fill = "#D8D8D8"
-    } else if (currentlyDisplaying == "nothing") {
-        document.getElementById("map").getElementById("switches").style.fill = "#00000000"
-        document.getElementById("map").getElementById("signals").style.fill = "#00000000"
-        document.getElementById("map").getElementById("trackcircuits").style.fill = "#00000000"
-    }
+    screenList.forEach(screen => {
+        try {
+            if (currentlyDisplaying == "switchnumbers") {
+                document.getElementById(screen).getElementById("switches").style.fill = "#FF00FF"
+                document.getElementById(screen).getElementById("signals").style.fill = "#00000000"
+                document.getElementById(screen).getElementById("trackcircuits").style.fill = "#00000000"
+            } else if (currentlyDisplaying == "signalnumbers") {
+                document.getElementById(screen).getElementById("switches").style.fill = "#00000000"
+                document.getElementById(screen).getElementById("signals").style.fill = "#F5E588"
+                document.getElementById(screen).getElementById("trackcircuits").style.fill = "#00000000"
+            } else if (currentlyDisplaying == "trackcircuits") {
+                document.getElementById(screen).getElementById("switches").style.fill = "#00000000"
+                document.getElementById(screen).getElementById("signals").style.fill = "#00000000"
+                document.getElementById(screen).getElementById("trackcircuits").style.fill = "#D8D8D8"
+            } else if (currentlyDisplaying == "nothing") {
+                document.getElementById(screen).getElementById("switches").style.fill = "#00000000"
+                document.getElementById(screen).getElementById("signals").style.fill = "#00000000"
+                document.getElementById(screen).getElementById("trackcircuits").style.fill = "#00000000"
+            }    
+        } catch (error) {
+            
+        }
+    });
 }
 
 updateCurrentlyDisplaying()
@@ -610,13 +849,19 @@ function smg() {
 function tsk() {
     routeWaitingList = []
     blockList.forEach(block => {
-        blocks[block].status = "cancelled"
-        setTimeout(function () { releaseBlock(block) }, 60000)
+        if (blockStatus(block) != "occupied") {
+            blocks[block].status = "cancelled"
+            setTimeout(function () { releaseBlock(block) }, 60000)
+        }
     });
     pointList.forEach(point => {
-        points[point].status = "cancelled"
-        setTimeout(function () { releaseBlock(point) }, 60000)
-        points[point].systemlock = false
+        if (blockStatus(point) != "occupied") {
+            points[point].status = "cancelled"
+            setTimeout(function () { releaseBlock(point) }, 60000)
+            if (points[point].flankprotection) {
+                points[points[point].flankprotection].systemlock = false
+            }
+        }
     });
 }
 
@@ -632,19 +877,6 @@ function ose(command) {
 
 function obl(command) {
     automaticSignalList = automaticSignalList.filter(x => x != "s" + command[1])
-}
-
-function tnd(command) {
-    if (command.length == 3) {
-        if (!trains[command[2]] && trains[command[1]]) {
-            trains[command[2]] = trains[command[1]]
-            delete trains[command[1]]
-        } else {
-            output.value = "ILLEGAL STATUS"
-        }
-    } else {
-        output.value = "ILLEGAL STATUS"
-    }
 }
 
 function sth() {
@@ -664,15 +896,15 @@ function findNextSignal(signal) {
     while (true) {
         if (signals[signal].direction == "right") {
             if (Array.from(checkedBlock)[0] == "b") {
-                if (blocks[checkedBlock].rightsignal) {
-                    return blocks[checkedBlock].rightsignal
+                if (getRightSignal(checkedBlock)) {
+                    return getRightSignal(checkedBlock)
                 }
             }
             checkedBlock = rightBlock(checkedBlock)
         } else {
             if (Array.from(checkedBlock)[0] == "b") {
-                if (blocks[checkedBlock].leftsignal) {
-                    return blocks[checkedBlock].leftsignal
+                if (getLeftSignal(checkedBlock)) {
+                    return getLeftSignal(checkedBlock)
                 }
             }
             checkedBlock = leftBlock(checkedBlock)
@@ -684,23 +916,27 @@ function findNextSignalOfBlock(checkedBlock) {
     while (true) {
         if (Array.from(checkedBlock)[0] == "b") {
             if (blocks[checkedBlock].direction == "right") {
-                if (blocks[checkedBlock].rightsignal) {
-                    return blocks[checkedBlock].rightsignal
+                if (getRightSignal(checkedBlock)) {
+                    return getRightSignal(checkedBlock)
                 }
             } else if (blocks[checkedBlock].direction == "left") {
-                if (blocks[checkedBlock].leftsignal) {
-                    return blocks[checkedBlock].leftsignal
+                if (getLeftSignal(checkedBlock)) {
+                    return getLeftSignal(checkedBlock)
                 }
+            } else {
+                return ""
             }
         } else if (Array.from(checkedBlock)[0] == "p") {
             if (points[checkedBlock].direction == "right") {
-                if (points[checkedBlock].rightsignal) {
-                    return points[checkedBlock].rightsignal
+                if (getRightSignal(checkedBlock)) {
+                    return getRightSignal(checkedBlock)
                 }
             } else if (points[checkedBlock].direction == "left") {
-                if (points[checkedBlock].leftsignal) {
-                    return points[checkedBlock].leftsignal
+                if (getLeftSignal(checkedBlock)) {
+                    return getLeftSignal(checkedBlock)
                 }
+            } else {
+                return ""
             }
         }
         checkedBlock = nextBlock(checkedBlock)
@@ -711,23 +947,27 @@ function findNextClosedSignalOfBlock(checkedBlock) {
     while (true) {
         if (Array.from(checkedBlock)[0] == "b") {
             if (blocks[checkedBlock].direction == "right") {
-                if (blocks[checkedBlock].rightsignal && signals[blocks[checkedBlock].rightsignal].status == "red") {
-                    return blocks[checkedBlock].rightsignal
+                if (getRightSignal(checkedBlock) && signals[getRightSignal(checkedBlock)].status == "red") {
+                    return getRightSignal(checkedBlock)
                 }
             } else if (blocks[checkedBlock].direction == "left") {
-                if (blocks[checkedBlock].leftsignal && signals[blocks[checkedBlock].leftsignal].status == "red") {
-                    return blocks[checkedBlock].leftsignal
+                if (getLeftSignal(checkedBlock) && signals[getLeftSignal(checkedBlock)].status == "red") {
+                    return getLeftSignal(checkedBlock)
                 }
+            } else {
+                return ""
             }
         } else if (Array.from(checkedBlock)[0] == "p") {
             if (points[checkedBlock].direction == "right") {
-                if (points[checkedBlock].rightsignal && signals[points[checkedBlock].rightsignal].status == "red") {
-                    return points[checkedBlock].rightsignal
+                if (getRightSignal(checkedBlock) && signals[getRightSignal(checkedBlock)].status == "red") {
+                    return getRightSignal(checkedBlock)
                 }
             } else if (points[checkedBlock].direction == "left") {
-                if (points[checkedBlock].leftsignal && signals[points[checkedBlock].leftsignal].status == "red") {
-                    return points[checkedBlock].leftsignal
+                if (getLeftSignal(checkedBlock) && signals[getLeftSignal(checkedBlock)].status == "red") {
+                    return getLeftSignal(checkedBlock)
                 }
+            } else {
+                return ""
             }
         }
         if (nextBlock(checkedBlock) != "") {
@@ -738,7 +978,106 @@ function findNextClosedSignalOfBlock(checkedBlock) {
     }
 }
 
-var automaticSignalList = ["s154", "s303", "s307", "s201", "s203", "s207", "s208", "s206", "s149", "s210", "s310"]
+const shortestDistanceNode = (distances, visited) => {
+	let shortest = null;
+
+	for (let node in distances) {
+		let currentIsShortest =
+			shortest === null || distances[node] < distances[shortest];
+		if (currentIsShortest && !visited.includes(node)) {
+			shortest = node;
+		}
+	}
+	return shortest;
+};
+
+const findShortestPath = (graph, startNode, endNode) => {
+	let distances = {};
+	distances[endNode] = "Infinity";
+	distances = Object.assign(distances, graph[startNode]);
+
+	let parents = { endNode: null };
+	for (let child in graph[startNode]) {
+		parents[child] = startNode;
+	}
+
+	let visited = [];
+
+	let node = shortestDistanceNode(distances, visited);
+
+	while (node) {
+		let distance = distances[node];
+		let children = graph[node];
+		for (let child in children) {
+			if (String(child) === String(startNode)) {
+				continue;
+			} else {
+				let newdistance = distance + children[child];
+				if (!distances[child] || distances[child] > newdistance) {
+					distances[child] = newdistance;
+					parents[child] = node;
+				}
+			}
+		}
+		visited.push(node);
+		node = shortestDistanceNode(distances, visited);
+	}
+
+	let shortestPath = [endNode];
+	let parent = parents[endNode];
+	while (parent) {
+		shortestPath.push(parent);
+		parent = parents[parent];
+	}
+	shortestPath.reverse();
+
+    shortestPath.forEach(block => {
+        if (Array.from(block)[0] == "b") {
+            if (blocks[block].overlap) {
+                shortestPath.push(blocks[block].overlap)
+            }
+        }
+    });
+
+	let results = {
+		distance: distances[endNode],
+		path: shortestPath,
+	};
+
+	return results;
+};
+
+var rightGraph = {}
+var leftGraph = {}
+
+function makeGraph() {
+    blockList.forEach(block => {
+        if (blocks[block].right != "") {
+            rightGraph[block] = {[blocks[block].right]: 1}
+        }
+    })
+    pointList.forEach(point => {
+        if (points[point].normalright == points[point].divergingright) {
+            rightGraph[point] = {[points[point].normalright]: 1}
+        } else {
+            rightGraph[point] = {[points[point].normalright]: 1, [points[point].divergingright]: 100}
+        }
+    })
+    blockList.forEach(block => {
+        if (blocks[block].right != "") {
+            leftGraph[block] = {[blocks[block].left]: 1}
+        }
+    })
+    pointList.forEach(point => {
+        if (points[point].normalleft == points[point].divergingleft) {
+            leftGraph[point] = {[points[point].normalleft]: 1}
+        } else {
+            leftGraph[point] = {[points[point].normalleft]: 1, [points[point].divergingleft]: 100}
+        }
+    })
+}
+
+makeGraph()
 
 function updateAutomaticSignals() {
     if (signalsReady) {
@@ -785,13 +1124,15 @@ function labelForBlock(block) {
 }
 
 function updateLabels() {
-    labels.forEach(label => {
-        if (blockStatus(label.slice(0, -1)) == "occupied") {
-            document.getElementById("map").getElementById(label).style.fill = "#FF0000"
-        } else if (blockStatus(label.slice(0, -1)) == "set") {
-            document.getElementById("map").getElementById(label).style.fill = "#03FF00"
+    blockList.forEach(label => {
+        if (document.getElementById(blocks[label].screen).getElementById(label + "l")) {
+            if (blockStatus(label) == "occupied") {
+                document.getElementById(blocks[label].screen).getElementById(label + "l").style.fill = "#FF0000"
+            } else if (blockStatus(label) == "set") {
+                document.getElementById(blocks[label].screen).getElementById(label + "l").style.fill = "#03FF00"
+            }
+            document.getElementById(blocks[label].screen).getElementById(label + "l").getElementsByTagName("tspan")[0].innerHTML = labelForBlock(label)
         }
-        document.getElementById("map").getElementById(label).getElementsByTagName("tspan")[0].innerHTML = labelForBlock(label.slice(0, -1))
     });
 }
 
@@ -803,6 +1144,7 @@ function updateScreen() {
     drawPoints()
     updateSignals()
     drawSignals()
+    updateSignalAspects()
     updateLabels()
     checkWaitingList()
     drawSignalMarkers()

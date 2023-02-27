@@ -1,294 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-    
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Primary Meta Tags -->
-    <title>Home | DispatchStation</title>
+    <title>Home | DispatchStation</title>
     <meta name="title" content="Home | DispatchStation">
-    <meta name="description" content="Simulation of the interlocking and ATS system which is being used in the M1 line of Istanbul metro">
+    <meta name="description" content="Simulation of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Home | DispatchStation">
-    <meta property="og:description" content="Simulation of the interlocking and ATS system which is being used in the M1 line of Istanbul metro">
+    <meta property="og:description" content="Simulation of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
     <meta property="og:image" content="https://dispatchstation.baranonen.com/favicon.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Home | DispatchStation">
-    <meta property="twitter:description" content="Simulation of the interlocking and ATS system which is being used in the M1 line of Istanbul metro">
+    <meta property="twitter:title" content="Home | DispatchStation">
+    <meta property="twitter:description" content="Simulation of the EBICOS 900 traffic management and dispatching system which is being used in the M1 line of Istanbul metro">
     <meta property="twitter:image" content="https://dispatchstation.baranonen.com/favicon.png">
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
-    * {
-        font-family: "Source Code Pro";
-        color: white;
-    }
-    body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background-color: black;
-    }
-    .container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        max-width: 700px;
-    }
-    h1 {
-        color: #03FF00
-    }
-    h2 {
-        color: #ffff40;
-        margin-bottom: 0;
-    }
-    h3 {
-        color: #FF00FF;
-        margin-bottom: 0;
-    }
-    table {
-        width: 100%;
-        border: 1px solid #C0C0C0;
-        border-spacing: 0;
-    }
-    td, th {
-        width: 33.33%;
-        padding: 5px;
-        border: 1px solid #C0C0C0;
-        margin: 0;
-    }
-    a, .link {
-        color: #04A1E8;
-    }
-    img {
-        width: 100%;
-        border: 1px solid #C0C0C0;
-    }
-    .langbtn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-    }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
 </head>
 <body>
-    <div class="container">
-        <h1>DispatchStation</h1>
-        <a class="langbtn" href="tr/">Türkçe ></a>
-        <a href="simulation/"><h2 class="link">Go to the simulation ></h1></a>
-        <a href="#help">Help ></a>
-        <h2>Info</h2>
-        <p>DispatchStation is a web based simulation of the interlocking and ATS system which is being used in the M1 line of Istanbul metro.</p>
-        <p>The screen which includes Otogar, Esenler and Terazidere stations is simulated. Since trains go to different terminus stations from here, different routes need to be created. This makes it the most used screen by dispatchers.</p>
-        <h2>Original System</h2>
-        <p>The signalling system (CITYFLO 250) in the line consists of four types of computers:</p>
-        <ul>
-            <li><h3>JZS 950 | Main Interlocking</h3><br>Ensures that routes do not overlap with each other and decides if signals can be opened or closed.</li>
-            <li><h3>JZU 840 | Object Controller</h3><br>According to the information from JZS 950, communicates with and manages the track objects such as switches and signals.</li>
-            <li><h3>MAN 90 | Dispatcher Interface</h3><br>Displays the entire system in a mimic screen and gets written commands from the dispatcher. Runs together with the "OPStation" program on the dispatcher's computer.</li>
-            <li><h3>EBICAB 700 | Onboard ATC</h3><br>Reads beacons, calculates braking curves and ensures that the train is in safe speed limits.</li>
-        </ul>
-        <img src="assets/esenler.png">
-        <p>MAN 90 system in the Esenler depot<br>Photo: <a href="http://nek.istanbul.edu.tr:4444/ekos/TEZ/48272.pdf">Nevzat BAYRAK</a></p>
-        <h2>Simulation</h2>
-        <p>This project simulates the OPStation program in a web interface. The dispatcher can request authorization and write commands that make the system change the states of objects and assign routes.</p>
-        <h2 id="help">Help</h2>
-        <h3>Interface</h3>
-        <p>To start writing commands, you need to get authorization.</p>
-        <p>Click "Authorization" in the first popup window.</p>
-        <img src="assets/firstscreen.png" alt="First screen. The Authorization button is being clicked.">
-        <p>Then, click "OK" in the next window.</p>
-        <img src="assets/secondscreen.png" alt="Second screen. The OK button is being clicked.">
-        <p>After completing these steps, you can write commands in the bottom right field.</p>
-        <h3>Dispatching</h3>
-        <p>To assign routes, you need to know the trains' destinations.</p>
-        <img src="assets/traindest.png" alt="A train with Havalimanı destination label">
-        <p>In blocks that have signals on any end, the incoming train's ID will be shown automatically.</p>
-        <p>This ID includes the destination of the train. Possible destinations and required routes are shown in the next title.</p>
-        <p>Another option to learn the trains' destinations is the timetable.</p>
-        <p>Hover your mouse over the date & time window to view the timetable.</p>
-        <p>Tip: You can click the date & time window to enter full screen mode.</p>
-        <img src="assets/timetable.png" alt="Timetable">
-        <p>Here, you can see the trains' destinations and entry times to your screen.</p>
-        <p>Together with destinations, the next station is also displayed, so that you can find the route easier.</p>
-        <h3>Opening Routes</h3>
-        <p>The mostly used command is YTT, which lets you assign routes between signals. For example, a train from Yenikapı to Havalimanı can be routed with "YTT 155 201"</p>
-        <img src="assets/terminal.png" alt="Picture of bottom right terminal.">
-        <p>To run this command, hit Enter.</p>
-        <p>Here's the list of the commands that you need to enter while dispatching different trains.</p>
-        <table>
-            <tr>
-                <th>Train ID's start</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Command</th>
-            </tr>
-            <tr>
-                <td>HY</td>
-                <td>H.Limanı</td>
-                <td>Yenikapı</td>
-                <td>YTT 202 154</td>
-            </tr>
-            <tr>
-                <td>HL</td>
-                <td>Yenikapı</td>
-                <td>H.Limanı</td>
-                <td>YTT 155 201</td>
-            </tr>
-            <tr>
-                <td>KY</td>
-                <td>Kirazlı</td>
-                <td>Yenikapı</td>
-                <td>YTT 304 154</td>
-            </tr>
-            <tr>
-                <td>KR</td>
-                <td>Yenikapı</td>
-                <td>Kirazlı</td>
-                <td>YTT 155 303</td>
-            </tr>
-        </table>
-        <p>You can also open routes partially, if a part of the desired route is blocked due to high traffic.</p>
-        <h3>Available Commands</h3>
-        <table>
-            <tr>
-                <th>Command</th>
-                <th>Explanation</th>
-                <th>Example</th>
-            </tr>
-            <tr>
-                <td>YTT (Yol Tanzim Talebi)</td>
-                <td>Assigns a route between specified signals. When not possible, adds the route to the queue so that it can be opened when possible.</td>
-                <td>YTT 155 201</td>
-            </tr>
-            <tr>
-                <td>YTI (Yol Tanzim İptali)</td>
-                <td>If the route is queued to open, removes the route from the queue.</td>
-                <td>YTI 155 201</td>
-            </tr>
-            <tr>
-                <td>CTI (Çoklu Tanzimli Yol İptali)</td>
-                <td>Cancels the opened route between specified signals.</td>
-                <td>CTI 155 201</td>
-            </tr>
-            <tr>
-                <td>TYI (Tanzimli Yol İptali)</td>
-                <td>If a route has been opened in the last 15 seconds, cancels this route. If a signal is specified, cancels the route between this signal and the next.</td>
-                <td>TYI / TYI 155</td>
-            </tr>
-            <tr>
-                <td>OBL (Otomatik Bloke)</td>
-                <td>Disables the automatic mode of the signal. Routes can again be opened with YTT.</td>
-                <td>OBL 156</td>
-            </tr>
-            <tr>
-                <td>OSE (Otomatik Serbest)</td>
-                <td>Makes the specified signal an automatic block signal. If the block being entered is clear, the train can continue.</td>
-                <td>OSE 156</td>
-            </tr>
-            <tr>
-                <td>TSK (Tüm Sinyaller Kapalı)</td>
-                <td>Closes all of the signals.</td>
-                <td>TSK</td>
-            </tr>
-            <tr>
-                <td>BSK (Blok Sinyali Kapalı)</td>
-                <td>Closes and blocks the signal.</td>
-                <td>BSK 155</td>
-            </tr>
-            <tr>
-                <td>KSI (Kapalı Sinyal İptali)</td>
-                <td>Removes the blocking of the signal. Signal goes back to normal operation.</td>
-                <td>KSI 155</td>
-            </tr>
-            <tr>
-                <td>STH (Sinyaller Tanzime Hazır)</td>
-                <td>Opens the routes of all automatic signals.</td>
-                <td>STH</td>
-            </tr>
-            <tr>
-                <td>MBL (Makas Bloke)</td>
-                <td>Blocks the specified switch.</td>
-                <td>MBL 421</td>
-            </tr>
-            <tr>
-                <td>MSE (Makas Serbest)</td>
-                <td>Releases the specified switch.</td>
-                <td>MSE 421</td>
-            </tr>
-            <tr>
-                <td>MLK (Makas Lokal Kumanda)</td>
-                <td>Puts the specified switch in local control. Switches in this mode cannot be controlled from OPStation.</td>
-                <td>MLK 421</td>
-            </tr>
-            <tr>
-                <td>MMK (Makas Merkezi Kumanda)</td>
-                <td>Puts the specified switch back to central control.</td>
-                <td>MMK 421</td>
-            </tr>
-            <tr>
-                <td>MSA (Makas Sağa)</td>
-                <td>Sets the specified switch to the right position.</td>
-                <td>MSA 421</td>
-            </tr>
-            <tr>
-                <td>MSO (Makas Sola)</td>
-                <td>Sets the specified switch to the left position.</td>
-                <td>MSO 421</td>
-            </tr>
-            <tr>
-                <td>MNG (Makas Numaralarını Göster)</td>
-                <td>Shows the switches' numbers.</td>
-                <td>MNG</td>
-            </tr>
-            <tr>
-                <td>SSG (Sinyal Numaralarını Göster)</td>
-                <td>Shows the signals' numbers.</td>
-                <td>SSG</td>
-            </tr>
-            <tr>
-                <td>RDG (Ray Devrelerini Göster)</td>
-                <td>Shows the track circuits' numbers.</td>
-                <td>RDG</td>
-            </tr>
-            <tr>
-                <td>SMG (Hiçbir Obje Gösterme)</td>
-                <td>Removes all of the objects from the screen.</td>
-                <td>SMG</td>
-            </tr>
-            <tr>
-                <td>TND (Tren Numarasını Değiştir)</td>
-                <td>Changes the number of the desired train.</td>
-                <td>TND HY501 HL501</td>
-            </tr>
-            <tr>
-                <td>STG (Sinyalde Tren Göster)</td>
-                <td>Changes the number of the incoming train to the signal.</td>
-                <td>STG 208 DP532</td>
-            </tr>
-            <tr>
-                <td>TYL (Tren Yer Listesi)</td>
-                <td>Shows a list of the trains' positions and the next closed signals.</td>
-                <td>TYL</td>
-            </tr>
-            <tr>
-                <td>SAM (Sinyal Akşam Modu)</td>
-                <td>Puts the signals in night mode and dims them.</td>
-                <td>SAM</td>
-            </tr>
-            <tr>
-                <td>SGM (Sinyal Gündüz Modu)</td>
-                <td>Puts the signals in day mode and brightens them.</td>
-                <td>SGM</td>
-            </tr>
-        </table>
+    <h1>DispatchStation</h1>
+    <p>Web-based simulation of the EBICOS 900 traffic management and dispatching system</p>
+    <details>
+        <summary>Navigation</summary>
+        <a href="./">Home</a>
+        <a href="/simulation/">Simulation</a>
         <br>
-        <a href="https://github.com/baranonen/DispatchStation">GitHub ></a>
-        <a href="simulation/">Start simulation ></a>
-    </div>
+        <span>Docs</span>
+        <hr>
+        <a href="/docs/quickstart/">Quick Start</a>
+        <a href="/docs/commands/">Commands</a>
+        <a href="/docs/trackobjects/">Track Objects</a>
+        <a href="/docs/userinterface/">User Interface</a>
+    </details>
+    <h2>Home</h2>
+    <a href="./simulation/">Go to the simulation ></a>
+    <p>DispatchStation simulates the CITYFLO 250 signalling system which is used in the Istanbul Metro's M1 line. Real commands and real track data from the line is included in the simulation.</p>
+    <p>The following systems are being used in the line:</p>
+    <ul>
+        <li>
+            <p><b>EBILOCK 950</b> - Main Interlocking</p>
+        </li>
+        <li>
+            <p><b>EBICOS 900 / MAN 90</b> - TMS and Dispatching System</p>
+        </li>
+        <li>
+            <p><b>EBICAB 700</b> - Automatic Train Control (ATC) System</p>
+        </li>
+    </ul>
+    <p>The simulation is written in JavaScript, is open source and can run on any web browser</p>
+    <img src="./assets/screenshot.png" alt="">
+    <small>Screenshot of the simulation</small>
+    <footer>
+        <a href="https://github.com/baranonen/DispatchStation">GitHub</a>
+        <br>
+        <a href="./simulation/">Simulation</a>
+    </footer>
 </body>
 </html>

@@ -24,6 +24,28 @@ body {
 
 .tracks {
     width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.tracks svg {
+    width: 100%;
+}
+
+.wrap {
+    flex-wrap: wrap;
+}
+
+.horizontal {
+    flex-wrap: nowrap;
+}
+
+.wrap svg {
+    width: 50%;
+}
+
+.horizontal svg {
+    width: 100%;
 }
 
 .start {
@@ -63,7 +85,8 @@ legend {
     left: 0;
     right: 0;
     background-color: rgb(236, 231, 217);
-    height: 31px;
+    min-height: 31px;
+    height: fit-content;
 }
 
 .top {
@@ -71,11 +94,16 @@ legend {
     bottom: unset;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
 }
 
 * {
     zoom: 1.05;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .status-bar * {
@@ -87,14 +115,6 @@ legend {
     margin: 0 5px 0 5px;
 }
 
-#timetable {
-    width: 360px;
-    height: 200px;
-    position: absolute;
-    top: 35px;
-    overflow: none;
-}
-
 .tyl {
     width: 40vw;
     height: 40vh;
@@ -103,4 +123,40 @@ legend {
 
 .window {
     padding: 0;
+}
+
+.screenswitch {
+    z-index: 999;
+    display: flex;
+    justify-content: right;
+    align-items: top;
+}
+
+.screenswitch svg, .screenswitch button {
+    height: 23px;
+    border: 1px gray solid;
+    margin: 0;
+    padding: 0;
+    opacity: 70%;
+}
+
+.screenswitch button {
+    max-width: 23px!important;
+    min-width: 23px!important;
+    margin: 0;
+    color: white;
+    background: black;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none!important;
+    font-family: Arial;
+    font-size: 13px;
+}
+
+.screenswitch button:active {
+    background: black;
+}
+
+.screenswitch svg:hover, .screenswitch button:hover {
+    border-color: cyan;
 }
