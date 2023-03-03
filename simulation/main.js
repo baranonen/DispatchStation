@@ -230,7 +230,6 @@ function switchingTime() {
 }
 
 function setPoint(point, position, systemlock = false, setFree = false) {
-    console.log(point)
     points[point].position = position
     if (systemlock) {
         points[point].systemlock = true
