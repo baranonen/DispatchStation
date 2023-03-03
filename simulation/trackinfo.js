@@ -1945,7 +1945,4 @@ function checkRouteIntegrity() {
             alert("Route Data Error\nSignal " + signal + " is declared to be in automatic mode but this signal doesn't exist.")
         }
     });
-    // Map'lerin id'lerini html'de ara
-    // Otomatik rotaların mümkün olmasını kontrol et
-    // Sinyalin nextblocku yoksa prevblocku olmalı kontrol et
 }

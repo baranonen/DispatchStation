@@ -190,30 +190,97 @@ function getRightSignal(block) {
     return result
 }
 
+function openWhenPointsReady(route) {
+    var routeReady = true
+    route.blocks.forEach(block => {
+        if (Array.from(block)[0] == "p") {
+            if (Array.from(block)[block.length - 1] == "d") {
+                if (points[block.slice(0, -1)].position != "diverging") {
+                    routeReady = false
+                }
+            } else {
+                if (points[block.slice(0, -1)].flankprotection) {
+                    if (points[points[block.slice(0, -1)].flankprotection].position != "normal") {
+                        routeReady = false
+                    }
+                }
+                if (points[block.slice(0, -1)].position != "normal") {
+                    routeReady = false
+                }
+            }
+        }
+    });
+    if (routeReady) {
+        route.blocks.forEach(block => {
+            if (Array.from(block)[0] == "b") {
+                blocks[block].status = "set"
+                blocks[block].direction = route.direction
+            } else if (Array.from(block)[0] == "p") {
+                points[block.slice(0, -1)].status = "set"
+                points[block.slice(0, -1)].direction = route.direction
+            }
+        });
+    } else {
+        setTimeout(openWhenPointsReady, 200, route)
+    }
+}
+
+function switchingTime() {
+    return Math.floor(Math.random() * (5000 - 3000 + 1) ) + 3000;
+}
+
+function setPoint(point, position, systemlock = false, setFree = false) {
+    console.log(point)
+    points[point].position = position
+    if (systemlock) {
+        points[point].systemlock = true
+    }
+    if (setFree) {
+        points[point].status = "unset"
+    }
+}
+
+function movePoint(point, position) {
+    if (points[point].position != position) {
+        setPoint(point, "transition")
+        window.setTimeout(setPoint, switchingTime(), point, position)
+        points[point].status = "reserved"
+    }
+    if (position == "normal") {
+        if (points[point].flankprotection) {
+            if (points[points[point].flankprotection].position == "normal") {
+                points[points[point].flankprotection].systemlock = true
+            } else {
+                points[points[point].flankprotection].status = "reserved"
+                setPoint(points[point].flankprotection, "transition")
+                window.setTimeout(setPoint, switchingTime(), points[point].flankprotection, "normal", true, true)
+            }
+        }
+    }
+}
+
 function setRoute(requestedRouteText) {
     requestedRoute.blocks.forEach(block => {
         if (Array.from(block)[0] == "b") {
-            blocks[block].status = "set"
-            blocks[block].direction = requestedRoute.direction
+            blocks[block].status = "reserved"
         } else if (Array.from(block)[0] == "p") {
+            points[block.slice(0, -1)].status = "reserved"
             if (Array.from(block)[block.length - 1] == "d") {
-                points[block.slice(0, -1)].position = "diverging"
+                if (points[block.slice(0, -1)] != "d") {
+                    movePoint(block.slice(0, -1), "diverging")
+                }
             } else {
-                points[block.slice(0, -1)].position = "normal"
-            }
-            points[block.slice(0, -1)].status = "set"
-            points[block.slice(0, -1)].direction = requestedRoute.direction
-            if (block.slice(-1) == "n") {
-                if (points[block.slice(0, -1)].flankprotection) {
-                    points[points[block.slice(0, -1)].flankprotection].position = "normal"
-                    points[points[block.slice(0, -1)].flankprotection].systemlock = true
+                if (points[block.slice(0, -1)] != "n") {
+                    movePoint(block.slice(0, -1), "normal")
                 }
             }
+            
         }
     });
     routeWaitingList = routeWaitingList.filter(v => v !== requestedRouteText)
     lastOpenedRoute.route = requestedRouteText
     lastOpenedRoute.seconds = 0
+    openWhenPointsReady(requestedRoute, requestedRouteText)
 }
 
 window.setInterval(updateSecondTime, 1000);
@@ -292,12 +359,12 @@ function checkRoutePossible(requestedRouteText) {
                 isPossible = false
             }
         } else if (Array.from(block)[0] == "p") {
-            if (points[block.slice(0, -1)].status != "unset") {
+            if (points[block.slice(0, -1)].status != "unset" || points[block.slice(0, -1)].position == "transition") {
                 isPossible = false
             }
             if (points[block.slice(0, -1)].flankprotection) {
                 if (points[points[block.slice(0, -1)].flankprotection].position == "diverging") {
-                    if (points[points[block.slice(0, -1)].flankprotection].status != "unset") {
+                    if (points[points[block.slice(0, -1)].flankprotection].status != "unset" || points[points[block.slice(0, -1)].flankprotection].position == "transition") {
                         isPossible = false
                     }
                 } 
@@ -441,7 +508,7 @@ function drawPoints() {
                 } else if (points[point].status == "cancelled") {
                     document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#FF00FF"
                 }
-            } else {
+            } else if (points[point].position == "diverging") {
                 document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#ffffff00"
                 if (points[point].status == "set") {
                     document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#03FF00"
@@ -458,6 +525,9 @@ function drawPoints() {
                 } else if (points[point].systemlock == true) {
                     document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#F5E588"
                 }
+            } else {
+                document.getElementById(points[point].screen).getElementById(point + "n").style.stroke = "#ffffff00"
+                document.getElementById(points[point].screen).getElementById(point + "d").style.stroke = "#ffffff00"
             }
         }
     });
@@ -483,7 +553,7 @@ function drawBlocks() {
             } else {
                 document.getElementById(blocks[block].screen).getElementById(block).style.stroke = "#03FF00"
             }
-        } else if (blocks[block].status == "unset") {
+        } else if (blocks[block].status == "unset" || blocks[block].status == "reserved") {
             if (blocks[block].isOverlapBlock) {
                 document.getElementById(blocks[block].screen).getElementById(block).style.fill = "#C0C0C0"
             } else {
@@ -567,94 +637,38 @@ function updateSignalAspects() {
 
 function updateSignals() {
     signalList.forEach(signal => {
-        if (signals[signal].notinscreen == true) {
-            if (signals[signal].endsignal) {
-                return
-            }
-            if (blocks[signals[signal].nextblock].status == "set") {
-                signals[signal].status = "green"
-            } else {
-                signals[signal].status = "red"
-            }
-            return
-        }
         if (signals[signal].endsignal) {
-            if (blocks[prevBlockOfSignal(signal)].status != "unset") {
+            if (blockStatus(signals[signal].prevblock) == "set") {
                 signals[signal].status = "red"
             } else {
                 signals[signal].status = ""
             }
-            return
-        }
-        if (signals[signal].control == "closed") {
-            signals[signal].status = "red"
         } else {
-            if (blockStatus(prevBlockOfSignal(signal)) == "unset") {
-                if (blockStatus(signals[signal].nextblock) == "unset" || signals[signal].direction != blocks[signals[signal].nextblock].direction) {
-                    signals[signal].status = ""
-                    return
-                }
-            } else if (signals[signal].direction != blocks[prevBlockOfSignal(signal)].direction) {
-                signals[signal].status = ""
-                return
-            }
-            signalShouldBe = "green"
-            checkedBlock = signals[signal].nextblock
-            while (signalShouldBe == "green") {
-                if (blockStatus(checkedBlock) == "cancelled") {
-                    signalShouldBe = "purple"
-                    break
-                }
-                if (Array.from(checkedBlock)[0] == "b") {
-                    if (signals[signal].direction == "right") {
-                        if (getRightSignal(checkedBlock) != "") {
-                            break
-                        }
-                    } else if (signals[signal].direction == "left") {
-                        if (getLeftSignal(checkedBlock) != "") {
-                            break
-                        }
-                    }
-                }
-                if (signals[signal].direction == "right") {
-                    checkedBlock = rightBlock(checkedBlock)
+                if (signals[signal].aspect == "green") {
+                    signals[signal].status = "green"
                 } else {
-                    checkedBlock = leftBlock(checkedBlock)
-                }
-                if (!checkedBlock) {
-                    break
-                }
-            }
-            if (signalShouldBe == "purple") {
-                signals[signal].status = signalShouldBe
-                return
-            } else {
-                signalShouldBe = "green"
-                checkedBlock = signals[signal].nextblock
-            }
-            while (signalShouldBe == "green") {
-                if (blockStatus(checkedBlock) != "set") {
-                    signalShouldBe = "red"
-                    break
-                }
-                if (blockDirection(checkedBlock) != signals[signal].direction) {
-                    signalShouldBe = "red"
-                    break
-                }
-                if (Array.from(checkedBlock)[0] == "b") {
-                    if (signals[signal].direction == "right") {
-                        if (getRightSignal(checkedBlock) != "") {
-                            break
-                        }
-                    } else if (signals[signal].direction == "left") {
-                        if (getLeftSignal(checkedBlock) != "") {
-                            break
-                        }
+                    if (blockStatus(signals[signal].nextblock) == "reserved" && blockStatus(prevBlockOfSignal(signal)) == "reserved") {
+                        signals[signal].status = ""
+                    } else if (blockStatus(signals[signal].nextblock) == "cancelled" && blockDirection(signals[signal].nextblock) == signals[signal].direction) {
+                        signals[signal].status = "purple"
+                    } else if (blockStatus(signals[signal].nextblock) == "cancelled" && blockDirection(signals[signal].nextblock) != signals[signal].direction) {
+                        signals[signal].status = "gray"
+                    } else if (blockStatus(signals[signal].nextblock) == "occupied" && blockStatus(prevBlockOfSignal(signal)) == "occupied") {
+                        signals[signal].status = "red"
+                    } else if (blockStatus(signals[signal].nextblock) == "occupied" && blockDirection(prevBlockOfSignal(signal)) != signals[signal].direction) {
+                        signals[signal].status = ""
+                    } else if (blockStatus(signals[signal].nextblock) == "occupied") {
+                        signals[signal].status = "red"
+                    } else if (blockStatus(prevBlockOfSignal(signal)) == "set" && blockStatus(signals[signal].nextblock) == "set") {
+                        if (!(blockDirection(prevBlockOfSignal(signal)) == signals[signal].direction && blockDirection(signals[signal].nextblock) == signals[signal].direction)) {
+                            signals[signal].status = ""
+                        } 
+                    } else if (blockStatus(prevBlockOfSignal(signal)) != "unset") {
+                        signals[signal].status = "red"
+                    } else {
+                        signals[signal].status = ""
                     }
                 }
-                checkedBlock = nextBlock(checkedBlock)
-            }
-            signals[signal].status = signalShouldBe
         }
     })
 }
@@ -748,13 +762,21 @@ window.setInterval(blinkSignalMarkers, 350);
 
 function msa(command) {
     if (points["p" + command[1]].status == "unset" && points["p" + command[1]].systemlock == false) {
-        points["p" + command[1]].position = "diverging"
+        if (points["p" + command[1]].position != "diverging") {
+            setPoint("p" + command[1], "transition")
+            window.setTimeout(setPoint, switchingTime(), "p" + command[1], "diverging", false, true)
+            points["p" + command[1]].status = "reserved"
+        }
     }
 }
 
 function mso(command) {
     if (points["p" + command[1]].status == "unset" && points["p" + command[1]].systemlock == false) {
-        points["p" + command[1]].position = "normal"
+        if (points["p" + command[1]].position != "normal") {
+            setPoint("p" + command[1], "transition")
+            window.setTimeout(setPoint, switchingTime(), "p" + command[1], "normal", false, true)
+            points["p" + command[1]].status = "reserved"
+        }
     }
 }
 
@@ -1135,8 +1157,6 @@ function updateLabels() {
         }
     });
 }
-
-window.setInterval(updateScreen, 100);
 
 function updateScreen() {
     updateAutomaticSignals()
