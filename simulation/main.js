@@ -445,13 +445,89 @@ function tyi(requestedRouteText) {
     }
 }
 
+function findNextSignalOfTrain(train) {
+    checkedBlock = trains[train].position
+    while (true) {
+        if (Array.from(checkedBlock)[0] == "b") {
+            if (trains[train].direction == "right") {
+                if (getRightSignal(checkedBlock)) {
+                    return getRightSignal(checkedBlock)
+                }
+            } else if (trains[train].direction == "left") {
+                if (getLeftSignal(checkedBlock)) {
+                    return getLeftSignal(checkedBlock)
+                }
+            } else {
+                return ""
+            }
+        } else if (Array.from(checkedBlock)[0] == "p") {
+            if (trains[train].direction == "right") {
+                if (getRightSignal(checkedBlock)) {
+                    return getRightSignal(checkedBlock)
+                }
+            } else if (trains[train].direction == "left") {
+                if (getLeftSignal(checkedBlock)) {
+                    return getLeftSignal(checkedBlock)
+                }
+            } else {
+                return ""
+            }
+        }
+        checkedBlock = nextBlock(checkedBlock)
+    }
+}
+
+function findNextClosedSignalOfTrain(train) {
+    checkedBlock = trains[train].position
+    while (true) {
+        if (Array.from(checkedBlock)[0] == "b") {
+            if (trains[train].direction == "right") {
+                if (getRightSignal(checkedBlock)) {
+                    if (signals[getRightSignal(checkedBlock)].aspect == "red" || signals[getRightSignal(checkedBlock)].endsignal == true) {
+                        return getRightSignal(checkedBlock)
+                    }
+                }
+            } else if (trains[train].direction == "left") {
+                if (getLeftSignal(checkedBlock)) {
+                    if (signals[getLeftSignal(checkedBlock)].aspect == "red" || signals[getLeftSignal(checkedBlock)].endsignal == true) {
+                        return getLeftSignal(checkedBlock)
+                    }
+                }
+            } else {
+                return ""
+            }
+        } else if (Array.from(checkedBlock)[0] == "p") {
+            if (trains[train].direction == "right") {
+                if (getRightSignal(checkedBlock)) {
+                    if (signals[getRightSignal(checkedBlock)].aspect == "red" || signals[getRightSignal(checkedBlock)].endsignal == true) {
+                        return getRightSignal(checkedBlock)
+                    }
+                }
+            } else if (trains[train].direction == "left") {
+                if (getLeftSignal(checkedBlock)) {
+                    if (signals[getLeftSignal(checkedBlock)].aspect == "red" || signals[getLeftSignal(checkedBlock)].endsignal == true) {
+                        return getLeftSignal(checkedBlock)
+                    }
+                }
+            } else {
+                return ""
+            }
+        }
+        if (trains[train].direction == "right") {
+            checkedBlock = rightBlock(checkedBlock)
+        } else {
+            checkedBlock = leftBlock(checkedBlock)
+        }
+    }
+}
+
 function tyl() {
     var d = new Date()
 
     var html = "<p><span>Tren Yer Listesi </span> GEO. NODE 1 " + d.toISOString().slice(0, 10) + " " + d.toTimeString().slice(0, 8) + "</p><hr><table><thead><td><span>TREN NUMARASI</span></td><td><span>QUEUE POS.</span></td><td><span>TIME</span></td><td><span>POS.</span></td><td><span>SIG IN STOP</span></td></thead>"
     
     for (let [key, value] of Object.entries(trains)) {
-        html += "<tr><td>" + key + "</td><td></td><td></td><td> IST " + findNextSignalOfBlock(value.position).substring(1) + "</td><td><span>IST " + findNextClosedSignalOfBlock(value.position).substring(1) + "</span></td></tr>"
+        html += "<tr><td>" + key + "</td><td></td><td></td><td> IST " + findNextSignalOfTrain(key).slice(1) + "</td><td><span>IST " + findNextClosedSignalOfTrain(key).slice(1) + "</span></td></tr>"
     }
 
     document.getElementById("tyliframe").contentWindow.document.body.innerHTML = html
@@ -647,6 +723,10 @@ function updateSignals() {
                     signals[signal].status = "green"
                 } else {
                     if (blockStatus(signals[signal].nextblock) == "reserved" && blockStatus(prevBlockOfSignal(signal)) == "reserved") {
+                        signals[signal].status = ""
+                    } else if (blockStatus(signals[signal].nextblock) == "unset" && blockStatus(prevBlockOfSignal(signal)) == "reserved") {
+                        signals[signal].status = ""
+                    } else if (blockStatus(signals[signal].nextblock) == "reserved" && blockStatus(prevBlockOfSignal(signal)) == "unset") {
                         signals[signal].status = ""
                     } else if (blockStatus(signals[signal].nextblock) == "cancelled" && blockDirection(signals[signal].nextblock) == signals[signal].direction) {
                         signals[signal].status = "purple"
