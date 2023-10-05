@@ -948,22 +948,11 @@ function smg() {
 }
 
 function tsk() {
-    routeWaitingList = []
-    blockList.forEach(block => {
-        if (blockStatus(block) != "occupied") {
-            blocks[block].status = "cancelled"
-            setTimeout(function () { releaseBlock(block) }, 60000)
+    signalList.forEach(signal => {
+        if (signals[signal].aspect == "green") {
+            bsk(["BSK", signal.substring(1)])
         }
-    });
-    pointList.forEach(point => {
-        if (blockStatus(point) != "occupied") {
-            points[point].status = "cancelled"
-            setTimeout(function () { releaseBlock(point) }, 60000)
-            if (points[point].flankprotection) {
-                points[points[point].flankprotection].systemlock = false
-            }
-        }
-    });
+    })
 }
 
 function ose(command) {
@@ -981,7 +970,9 @@ function obl(command) {
 }
 
 function sth() {
-    signalsReady = true
+    signalList.forEach(signal => {
+        ksi(["KSI", signal.substring(1)])
+    })
 }
 
 function bsk(command) {

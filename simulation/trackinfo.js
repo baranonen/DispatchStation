@@ -9,7 +9,7 @@ var automaticBlockList = []
 var screens = {
     "map1": `<svg id="map1" viewBox="0 0 1000 445" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
-            <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-onafzam83s-1">
+            <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-cwrriiof93-1">
                 <stop stop-color="#FFFFFF" stop-opacity="0.5" offset="0%"></stop>
                 <stop stop-color="#000000" stop-opacity="0.5" offset="100%"></stop>
             </linearGradient>
@@ -17,13 +17,8 @@ var screens = {
         <g id="Page-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
             <g id="Artboard">
                 <rect fill="#000000" x="0" y="0" width="1000" height="445"></rect>
-                <line x1="192" y1="120.5" x2="231" y2="120.5" id="b131" stroke="#C0C0C0" stroke-width="3"></line>
                 <line x1="282" y1="120.5" x2="333" y2="120.5" id="b194" stroke="#C0C0C0" stroke-width="3"></line>
                 <line x1="282" y1="75.5" x2="333" y2="75.5" id="b184" stroke="#C0C0C0" stroke-width="3"></line>
-                <line x1="345" y1="75.5" x2="457" y2="75.5" id="b131" stroke="#C0C0C0" stroke-width="3"></line>
-                <line x1="480" y1="75.5" x2="659" y2="75.5" id="b131" stroke="#C0C0C0" stroke-width="3"></line>
-                <line x1="671" y1="75.5" x2="737" y2="75.5" id="b131" stroke="#C0C0C0" stroke-width="3"></line>
-                <line x1="39" y1="120.5" x2="180" y2="120.5" id="b141" stroke="#C0C0C0" stroke-width="3"></line>
                 <line x1="231" y1="75.5" x2="246" y2="75.5" id="p402n" stroke="#C0C0C0" stroke-width="3"></line>
                 <polyline id="p402d" stroke="#C0C0C0" stroke-width="3" points="231 75.5 234.000247 75.5 241.550926 83.0506788"></polyline>
                 <line x1="231" y1="120.5" x2="246" y2="120.5" id="p401n" stroke="#C0C0C0" stroke-width="3"></line>
@@ -48,7 +43,7 @@ var screens = {
                 <path d="M474,72.2637828 L478.062419,79.65 L469.937581,79.65 L474,72.2637828 Z" id="s108" stroke="#C0C0C0" stroke-width="1.7" transform="translate(474.000000, 75.500000) scale(-1, 1) rotate(90.000000) translate(-474.000000, -75.500000) "></path>
                 <line x1="345" y1="120.5" x2="457" y2="120.5" id="b131" stroke="#C0C0C0" stroke-width="3"></line>
                 <line x1="480" y1="120.5" x2="659" y2="120.5" id="b131" stroke="#C0C0C0" stroke-width="3"></line>
-                <line x1="345" y1="120.5" x2="457" y2="120.5" id="b195" stroke="#C0C0C0" stroke-width="3" fill="url(#linearGradient-onafzam83s-1)"></line>
+                <line x1="345" y1="120.5" x2="457" y2="120.5" id="b195" stroke="#C0C0C0" stroke-width="3" fill="url(#linearGradient-cwrriiof93-1)"></line>
                 <line x1="480" y1="120.5" x2="659" y2="120.5" id="b196" stroke="#C0C0C0" stroke-width="3"></line>
                 <path d="M463,117.263783 L467.062419,124.65 L458.937581,124.65 L463,117.263783 Z" id="s111" stroke="#C0C0C0" stroke-width="1.7" transform="translate(463.000000, 120.500000) rotate(90.000000) translate(-463.000000, -120.500000) "></path>
                 <path d="M665,117.263783 L669.062419,124.65 L660.937581,124.65 L665,117.263783 Z" id="s115" stroke="#C0C0C0" stroke-width="1.7" transform="translate(665.000000, 120.500000) rotate(90.000000) translate(-665.000000, -120.500000) "></path>
@@ -66,8 +61,6 @@ var screens = {
                 <path d="M288,212.263783 L292.062419,219.65 L283.937581,219.65 L288,212.263783 Z" id="s123" stroke="#C0C0C0" stroke-width="1.7" transform="translate(288.000000, 215.500000) rotate(90.000000) translate(-288.000000, -215.500000) "></path>
                 <path d="M288,254.263783 L292.062419,261.65 L283.937581,261.65 L288,254.263783 Z" id="s125" stroke="#C0C0C0" stroke-width="1.7" transform="translate(288.000000, 257.500000) rotate(90.000000) translate(-288.000000, -257.500000) "></path>
                 <polygon id="s350" fill="#FFFFFF" transform="translate(34.500000, 120.500000) scale(-1, 1) translate(-34.500000, -120.500000) " points="39 114.5 36 114.5 36 119.00061 30 119.00061 30 122 36 122 36 126.5 39 126.5"></polygon>
-                <line x1="192" y1="75.5" x2="231" y2="75.5" id="b131" stroke="#C0C0C0" stroke-width="3"></line>
-                <line x1="39" y1="75.5" x2="180" y2="75.5" id="b141" stroke="#C0C0C0" stroke-width="3"></line>
                 <line x1="192" y1="75.5" x2="231" y2="75.5" id="b182" stroke="#C0C0C0" stroke-width="3"></line>
                 <line x1="39" y1="75.5" x2="180" y2="75.5" id="b181" stroke="#C0C0C0" stroke-width="3"></line>
                 <path d="M186,72.2637828 L190.062419,79.65 L181.937581,79.65 L186,72.2637828 Z" id="s101" stroke="#C0C0C0" stroke-width="1.7" transform="translate(186.000000, 75.500000) rotate(90.000000) translate(-186.000000, -75.500000) "></path>
